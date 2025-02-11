@@ -1,7 +1,13 @@
 ##### MICB 475 Team 8
 
-# 28 January 2025 Team Meeting
-No official meeting notetaker. Preliminary discussion about data wrangling will be done in [this Google Doc](https://docs.google.com/document/d/19ViECbRmhkQHRDq6u6QZakAeyeBRO01sz017HTwXPtE/edit?usp=sharing).
+# February 11 2025 Team Meeting
+
+Agenda
+
+- Discuss colum selection and organization for metadata file finalization.
+- Discuss control for our samples: do we need to remove any samples (such as the BLANKS) ? 
+- Discuss analysis requirements: are there specific metadata fields we should consider for downstream visualizations?
+- Discuss project proposal objectives. 
 
 # February 4 2025 Team Meeting
 
@@ -39,3 +45,6 @@ Team Proposal } due after reading week, come to team meeting next week with ques
 - will get team server credentials (but keep a copy of qza and qzv files on Github)
 - all scripts, qiime files etc. should be on Github
 - processing on server, analysis on local R
+
+# 28 January 2025 Team Meeting
+No official meeting notetaker. Preliminary discussion about data wrangling will be done in [this Google Doc](https://docs.google.com/document/d/19ViECbRmhkQHRDq6u6QZakAeyeBRO01sz017HTwXPtE/edit?usp=sharing).
