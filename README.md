@@ -4,7 +4,7 @@
 
 Agenda
 
-- Discuss colum selection and organization for metadata file finalization.
+- Discuss column selection and organization for metadata file completion.
 - Discuss control for our samples: do we need to remove any samples (such as the BLANKS) ? 
 - Discuss analysis requirements: are there specific metadata fields we should consider for downstream visualizations?
 - Discuss project proposal objectives. 
