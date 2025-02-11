@@ -45,6 +45,7 @@ Proposal discussion
 - cite all packages we use, cite QIIME2
 
 ACTION --> ask Evelyn for the machine learning script
+
 ACTION --> Bessie will let us know if we can format our references in a style other than ASM
 
 # February 4 2025 Team Meeting
