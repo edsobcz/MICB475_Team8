@@ -7,7 +7,45 @@ Agenda
 - Discuss column selection and organization for metadata file completion.
 - Discuss control for our samples: do we need to remove any samples (such as the BLANKS) ? 
 - Discuss analysis requirements: are there specific metadata fields we should consider for downstream visualizations?
-- Discuss project proposal objectives. 
+- Discuss project proposal objectives.
+
+Meeting Minutes
+
+How we rebuilt the metadata:
+Only a subset of the project was 16S, and the accession numbers in the metdata were not complete (only 385 of 1031 rows have an accession number). By combining multiple data files available for this dataset, we were able to achieve a metadata with 1030 samples, looking at ~1800 variables. Data has been processed and denoised by Sebastian.
+
+- all fastq files on the server are accounted for
+
+We'll leave out the BLANK items, which leaves us with ~800 samples
+
+INSTI: promotes higher alpha diversity
+All other drugs (NRTI, NNTRI, PI, etc.) decreased alpha diversity
+--> might be worth looking into the physiological mechanisms of the medications, as that may be how it's affecting alpha diversity.
+--> we can divide up the drug regimens based on whether they take INSTI or not
+
+variables we're looking at:
+- HIV-only (667 patients) & HIV-HCV coinfection (154 patients)
+- INSTI & no-INSTI
+- depression (potentially, if we don't see anything after looking at the above variables) (we may want to look at if depression overrides the impact of drugs on the microbiome)
+    --> we would split based on the Beck depression cutoff (either by the numerical values, or categorical (eg. mild, moderate)
+
+Git commands
+- git pull origin main
+- git add .
+- git commit -m ""
+- git push origin main
+
+Proposal discussion
+- don't force a research gap
+- experimental aims
+      - QIIME
+      - diversity
+      - composition
+      - indicator taxa + machine learning (likely a clustering model)
+- cite all packages we use, cite QIIME2
+
+ACTION --> ask Evelyn for the machine learning script
+ACTION --> Bessie will let us know if we can format our references in a style other than ASM
 
 # February 4 2025 Team Meeting
 
