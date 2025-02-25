@@ -5,6 +5,34 @@ Agenda:
 - Discuss our machine learning model and decide on a final model approach
 - Discuss whether we should look at depression for all aims
 
+  Meeting Minutes
+
+  Machine Learning Script } Python or R version
+
+  Proposal Overview
+  - good experimental aims with clear layout
+  - metadata wrangling
+    - 4 categories : INSTI or no, depression or no
+    - did rarefaction on Qiime2 as R was taking too long
+    - Github includes both the whole metadata and the one that only includes the columns we are using
+   
+    Next Steps
+    1.show that HIV positive patients have lower alpha diversity than patients without HIV (HIV+ vs HIV-HCV-)
+    2. HIV+dep+ vs HIV+dep- 
+    3. make a histogram that shows how many people are taking each drug type (or can do pie chart if there are too may columns) and another one that shows how many drugs people take (ex. 10 people take 2 drugs, 20 people take 3 drugs)
+         -- general/broad overview of the entire dataset
+         -- find a drug as a control that has a decent amount of people taking and not taking and use this as our comparison to INSTI
+    4. first aim: just look at depression and drug as a preliminary correlation, may be hard to study because we don't know the order of events (are the patients depressed before they started to take the drug)
+         -- show this in a pie chart - abandon correlation
+         -- if theres no difference than disregard depression here on out
+    5. make a histogram that shows how many people are taking each drug type (or can do pie chart if there are too may columns) and another one that shows how many drugs people take (ex. 10 people take 2 drugs, 20 people take 3 drugs)
+         -- general/broad overview of the entire dataset
+         -- find out which is the most common drug type and use this as our comparison to INSTI
+    6. generate the alpha and beta diversity matrices with HIV+INSTI+ vs HIV+ INSTI- } shannon, faith and unweighted unifrac
+    7. statistical test and PCoA plot
+    8. compare HIV+INSTI+ vs HIV-HCV- to see if alpha diversity is restored or just increased
+   
+
 # February 11 2025 Team Meeting
 
 Agenda
