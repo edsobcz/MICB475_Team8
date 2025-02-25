@@ -1,4 +1,9 @@
 ##### MICB 475 Team 8
+# February 25 2025 Team Meeting
+Agenda:
+- Review proposal and plan of action
+- Discuss our machine learning model and decide on a final model approach
+- Discuss whether we should look at depression for all aims
 
 # February 11 2025 Team Meeting
 
