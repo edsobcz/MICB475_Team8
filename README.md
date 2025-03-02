@@ -25,9 +25,6 @@ Agenda:
     - first aim: just look at depression and drug as a preliminary correlation, may be hard to study because we don't know the order of events (are the patients depressed before they started to take the drug)
          -- show this in a pie chart - abandon correlation
          -- if theres no difference than disregard depression here on out
-    - make a histogram that shows how many people are taking each drug type (or can do pie chart if there are too may columns) and another one that shows how many drugs people take (ex. 10 people take 2 drugs, 20 people take 3 drugs)
-         -- general/broad overview of the entire dataset
-         -- find out which is the most common drug type and use this as our comparison to INSTI
     - generate the alpha and beta diversity matrices with HIV+INSTI+ vs HIV+ INSTI- } shannon, faith and unweighted unifrac
     - statistical test and PCoA plot
     - compare HIV+INSTI+ vs HIV-HCV- to see if alpha diversity is restored or just increased
