@@ -6,6 +6,15 @@
 .RData
 .RDataTmp
 
+# Storage files
+.DS_Store
+
+# Large data files 
+*.csv
+*.tsv
+*.txt
+*.nwk
+
 # User-specific files
 .Ruserdata
 
