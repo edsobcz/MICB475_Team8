@@ -1,18 +1,49 @@
 ##### MICB 475 Team 8
 # March 4 2025 Team Meeting
-Agenda:
+### Agenda:
 - Discuss team proposal and feedback
 - Discuss alpha and beta diversity results
 - Plan for this week
 
+### Meeting Minutes:
+
+Introduction: what do we know and what are we missing
+- mention machine learning approach because it’s an advancement in the field
+- move dataset overview to the last paragraph of the introduction
+  - "in order to look at this question, the authors used this data…"
+- add information about the insti drug classes to introduction
+  - hiv —> hiv arvs —> hiv arvs with relation to microbiome —> details of our specific project
+
+Experimental Aims: split first aim into two aims and reshape the others
+1. hiv and depression — see if there's an effect
+2. alpha and beta diversity for INSTI treatment
+3. indicator species
+4. machine learning
+in between aim 2 and 3 is functional analysis, which will not be added to the proposed approach but which we will do if we have time
+
+Title: revamp to take out depression
+
+Proposed Approach:
+- take out depression from aim 2 and add depression comparisons to aim 1
+- remove depression comparisons from aim 2
+
+Metadata:
+- we want to add sex, age, and bmi to the metadata
+- hopefully this will help with our PCoA analysis, which is currently lacking
+
+Current Updates:
+- we see a difference in beta diversity between INSTI+ and INSTI- PLWH but no difference for alpha diversity
+- this is unusual in the literature but matches up with what these researchers saw with their dataset
+
+
 
 # February 25 2025 Team Meeting
-Agenda:
+### Agenda:
 - Review proposal and plan of action
 - Discuss our machine learning model and decide on a final model approach
 - Discuss whether we should look at depression for all aims
 
-  Meeting Minutes
+### Meeting Minutes
 
   Machine Learning Script } Python or R version
 
@@ -39,14 +70,14 @@ Agenda:
 
 # February 11 2025 Team Meeting
 
-Agenda
+### Agenda
 
 - Discuss column selection and organization for metadata file completion.
 - Discuss control for our samples: do we need to remove any samples (such as the BLANKS) ? 
 - Discuss analysis requirements: are there specific metadata fields we should consider for downstream visualizations?
 - Discuss project proposal objectives.
 
-Meeting Minutes
+### Meeting Minutes
 
 How we rebuilt the metadata:
 Only a subset of the project was 16S, and the accession numbers in the metdata were not complete (only 385 of 1031 rows have an accession number). By combining multiple data files available for this dataset, we were able to achieve a metadata with 1030 samples, looking at ~1800 variables. Data has been processed and denoised by Sebastian.
@@ -87,6 +118,8 @@ ACTION --> Bessie will let us know if we can format our references in a style ot
 
 # February 4 2025 Team Meeting
 
+### Meeting Minutes
+
 Depression dataset preliminary wrangling - works well
 
 Confirming which measurements we will be using
@@ -123,4 +156,7 @@ Team Proposal } due after reading week, come to team meeting next week with ques
 - processing on server, analysis on local R
 
 # 28 January 2025 Team Meeting
+
+### Meeting Minutes 
+
 No official meeting notetaker. Preliminary discussion about data wrangling will be done in [this Google Doc](https://docs.google.com/document/d/19ViECbRmhkQHRDq6u6QZakAeyeBRO01sz017HTwXPtE/edit?usp=sharing).
