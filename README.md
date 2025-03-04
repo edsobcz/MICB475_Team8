@@ -3,6 +3,7 @@
 Agenda:
 - Discuss team proposal and feedback
 - Discuss alpha and beta diversity results
+- Plan for this week
 
 
 # February 25 2025 Team Meeting
