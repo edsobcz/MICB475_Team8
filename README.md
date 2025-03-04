@@ -1,4 +1,10 @@
 ##### MICB 475 Team 8
+# March 4 2025 Team Meeting
+Agenda:
+- Discuss team proposal and feedback
+- Discuss alpha and beta diversity results
+
+
 # February 25 2025 Team Meeting
 Agenda:
 - Review proposal and plan of action
