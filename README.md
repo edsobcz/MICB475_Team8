@@ -6,6 +6,34 @@
 - delegate team tasks for the week
 
 ### Meeting Minutes:
+- Attendees: Emily W, Emily H, Sebastian
+- Eddie absent; no indicator taxa results at the moment
+- distribution of roles/tasks
+  - Sebastian comfortable with coding
+  - everyone good with distribution so far
+- after this week: core microbiome, machine learning
+- ML will probably mostly be Eddie
+- by next week: alpha/beta, indicator taxa, core microbiome; have preliminary results
+- last week, mostly worked on rewriting proposal
+- Sebastian rerunning alpha/beta with newly subsetted monoinfected depression vs no depression
+- Shannon for depression: no change
+- want to look at Shannon, Faith, weighted/unweighted unifrac
+- saving images: save as pdf, easier to edit later
+- 2 more meetings until oral presentation!
+- Emily W ran Eddie's indicator taxa code from GitHub
+  - INSTI group sees greater richness in Clostridia
+  - INSTI group depletion of certain taxa
+  - no INSTI has more indicator species
+  - look into these species, if there's prior research on the taxa wrt HIV
+  - Actinobacteria is INSTI-specific
+  - Sebastian ran the code and sees gamma in INSTI but Emily W doesn't; need to set seed
+- Sebastian to finish alpha/beta diversity for HIV w/ depression
+- next steps:
+  - look into indicator species
+  - set a seed for indicator analysis
+  - core microbiome
+  - differential analysis
+  - upload figures to GitHub for next week
 
 # March 4 2025 Team Meeting
 ### Agenda:
