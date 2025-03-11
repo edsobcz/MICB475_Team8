@@ -1,4 +1,12 @@
 ##### MICB 475 Team 8
+# March 10 2025 Team Meeting
+### Agenda:
+- discuss indicator species analysis results
+- next steps: knn and random forest; where to start? weekly timeline?
+- delegate team tasks for the week
+
+### Meeting Minutes:
+
 # March 4 2025 Team Meeting
 ### Agenda:
 - Discuss team proposal and feedback
