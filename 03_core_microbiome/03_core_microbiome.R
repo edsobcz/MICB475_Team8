@@ -4,6 +4,7 @@ library(tidyverse)
 library(phyloseq)
 library(microbiome)
 library(ggVennDiagram)
+library(sf)
 
 # load data
 load("mpt_final.RData")
@@ -20,19 +21,21 @@ INSTI_pos <- subset_samples(mpt_RA, INSTI_drug_current == "YES")
 INSTI_neg <- subset_samples(mpt_RA, INSTI_drug_current == "NO")
 
 # Check ASVs
-pos_ASVs <- core_members(INSTI_pos, detection = 0.01, prevalence = 0.7)
-neg_ASVs <- core_members(INSTI_neg, detection = 0, prevalence = 0.7)
+pos_ASVs <- core_members(INSTI_pos, detection = 0.005, prevalence = 0.35)
+neg_ASVs <- core_members(INSTI_neg, detection = 0.005, prevalence = 0.35)
 
-### this is where errors show up: when detection is changed to above 0, the prune_taxa lines that
-### call on that object throw up an error. somebody please figure out what I'm doing wrong and tell
-### me I'm being an idiot. please and thank you.
+# detection of 0.01 and prevalence of 0.35 is too high
 
-prune_taxa(pos_ASVs, mpt_final) |>
+pos_pruned <- prune_taxa(pos_ASVs, mpt_final) |>
   tax_table()
-prune_taxa(neg_ASVs, mpt_final) |>
+neg_pruned <- prune_taxa(neg_ASVs, mpt_final) |>
   tax_table()
 
 # Plot relative abundance
 prune_taxa(pos_ASVs, mpt_final) |> 
   plot_bar(fill="Family") + 
   facet_wrap(.~`INSTI_drug_current`, scales ="free")
+
+# Venn diagram
+insti_venn <- ggVennDiagram(x=list(INSTI = pos_pruned, NoINSTI = neg_pruned))
+insti_venn
