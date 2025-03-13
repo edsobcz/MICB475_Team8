@@ -11,6 +11,7 @@ load("mpt_rare.RData")
 
 ### Perform indicator species analysis ###
 insti_relative <- transform_sample_counts(mpt_rare, fun=function(x) x/sum(x))
+set.seed(123)
 
 isa_output <- multipatt(t(otu_table(insti_relative)), 
                         cluster = sample_data(insti_relative)$INSTI_drug_current)
@@ -62,7 +63,7 @@ group_by(no_INSTI_indic_species, Class) |>
 # together
 all_indic_species <- insti_isa |> 
   mutate(insti = case_when(index == 1 ~ "no INSTI",
-                           index == 2 ~ "INSTI")) |> 
+                           index == 2 ~ "INSTI")) |>
   select(stat:insti) |>
   arrange(desc(stat)) |> 
   group_by(Class, insti) |> 
@@ -71,6 +72,14 @@ all_indic_species <- insti_isa |>
     geom_bar(stat = "identity") +
     facet_grid(rows = vars(insti)) +
     labs(title = "INSTI Indicator Species") +
+    xlab("Bacterial Class") +
+    ylab("Count") +
+    scale_x_discrete(labels = c("c__Actinobacteria" = "Actinobacteria", 
+                                "c__Alphaproteobacteria" = "Alphaproteobacteria", 
+                                "c__Bacilli" = "Bacilli", "c__Bacteroidia" = "Bacteroidia", 
+                                "c__Clostridia" = "Clostridia", "c__Desulfovibrionia" = "Desulfovibrionia", 
+                                "c__Gammaproteobacteria" = "Gammaproteobacteria", "c__Negativicutes" = "Negativicutes")) +
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 all_indic_species
+
