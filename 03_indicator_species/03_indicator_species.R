@@ -79,7 +79,10 @@ all_indic_species <- insti_isa |>
                                 "c__Bacilli" = "Bacilli", "c__Bacteroidia" = "Bacteroidia", 
                                 "c__Clostridia" = "Clostridia", "c__Desulfovibrionia" = "Desulfovibrionia", 
                                 "c__Gammaproteobacteria" = "Gammaproteobacteria", "c__Negativicutes" = "Negativicutes")) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 11))
 
 all_indic_species
 
+ggsave(filename = 'indic_plot.png',
+       all_indic_species,
+       height = 6, width = 5)
