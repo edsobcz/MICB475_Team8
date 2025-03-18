@@ -1,4 +1,11 @@
 ##### MICB 475 Team 8
+# March 18 2025 Team Meeting
+### Agenda:
+- discuss differential expression analysis results
+- review result for diversity metrics and taxonomic analysis 
+- identify potential research directions for notable taxa
+- clarify next steps for ML development
+
 # March 10 2025 Team Meeting
 ### Agenda:
 - discuss indicator species analysis results
