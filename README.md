@@ -30,6 +30,7 @@
 
   - Next Steps
       - confirm with Evelyn if we can skip glom by genus
+      - we can't glom to genus, we lose a lose of important data. If anything, let's glom to species (this would join separate ASVs that are the same down to the species level), then graph to class
 # March 10 2025 Team Meeting
 ### Agenda:
 - discuss indicator species analysis results
