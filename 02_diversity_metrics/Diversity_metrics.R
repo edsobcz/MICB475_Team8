@@ -22,6 +22,8 @@ otu <- read_delim(file = "feature-table.txt", delim="\t", skip=1)
 tax <- read_delim("taxonomy.tsv", delim="\t")
 phylotree <- read.tree("tree.nwk")
 
+# Metadata file with 7 more columns
+meta_long <- read_delim("modified_metadata_long.tsv", delim="\t")
 ## Format Files ##
 
 # OTU table
@@ -33,6 +35,11 @@ OTU <- otu_table(otu_mat, taxa_are_rows = TRUE)
 samp_df <- as.data.frame(meta[,-1])
 rownames(samp_df)<- meta$'sample-id'
 SAMP <- sample_data(samp_df)
+
+#Metadata Long
+#samp_df <- as.data.frame(meta_long[,-1])
+#rownames(samp_df)<- meta_long$'sample-id'
+#SAMP <- sample_data(samp_df)
 
 #Taxonomy 
 # Convert taxon strings to a table with separate taxa rank columns
@@ -57,14 +64,13 @@ mpt_no_blanks <- subset_samples(mpt_filt_nolow, sample_type != "control blank")
 # Remove samples with less than 100 reads
 mpt_final <- prune_samples(sample_sums(mpt_no_blanks)>100, mpt_no_blanks) 
 mpt_rare <- rarefy_even_depth(mpt_final, rngseed = 124, sample.size = 25228)
+mpt_final_monoinfected <- subset_samples(mpt_final, hiv_status_clean == "HIV+"& hcv == "NO")
 
 # Subset samples for subsequent analysis
 Infected <- subset_samples(mpt_rare, hiv_status_clean == "HIV+"& hcv == "NO")
 Healthy <- subset_samples(mpt_rare, hiv_status_clean == "HIV-"& hcv == "NO")
 INSTI_pos <- subset_samples(mpt_rare, hiv_status_clean == "HIV+"& INSTI_drug_current == "YES")
 INSTI_neg <- subset_samples(mpt_rare, hiv_status_clean == "HIV+"& INSTI_drug_current == "NO")
-
-
 
 #### Pie Chart ####
 # ----- HIV+ vs Healthy -----
@@ -228,7 +234,7 @@ shannon_hdp <- ggplot(combined_richness, aes(x = group, y = Shannon, fill = grou
                 geom_boxplot() +
                 theme_bw() +
                 labs(title = "Shannon Diversity by Depression \n Status in HIV+ Individuals",
-                     y = "Shannon DiversityD",
+                     y = "Shannon Diversity",
                      x = "") +
                 scale_fill_manual(values = c("Depressed" = "tan", "Non-depressed" = "chocolate"))+
                 theme(legend.position = "none",
@@ -274,10 +280,86 @@ faiths_hdp <- ggplot(pd_combined, aes(x = Group, y = Faith_PD, fill = Group)) +
                       plot.title = element_text(hjust = 0.5))
 faiths_hdp
 
+# ----- Shannon Diversity INSTI+/INSTI-  --------
+# Calculate alpha diversity with depression into account
+rich_insti <- estimate_richness(INSTI_pos, measures = c("Shannon"))
+rich_no_insti <- estimate_richness(INSTI_neg, measures = c("Shannon"))
+
+# Add group labels
+rich_insti$group <- "INSTI+"
+rich_no_insti$group <- "INSTI-"
+
+# Add sample names as a column
+rich_insti$sample <- rownames(rich_insti)
+rich_no_insti$sample <- rownames(rich_no_insti)
+
+# Combine the data
+combined_richness <- rbind(rich_insti, rich_no_insti)
+
+# Plot
+shannon_insti <- ggplot(combined_richness, aes(x = group, y = Shannon, fill = group)) +
+  geom_boxplot() +
+  theme_bw() +
+  labs(title = "Shannon Diversity by INSTI Status",
+       y = "Shannon Diversity",
+       x = "") +
+  scale_fill_manual(values = c("INSTI+" = "darkblue", "INSTI-" = "darkgrey"))+
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
+
+shannon_insti
+
+#----- Faiths Phylogenetic INSTI+/INSTI- ------
+# Extract OTU tables and tree
+otu_table_insti <- otu_table(INSTI_pos)
+otu_table_no_insti <- otu_table(INSTI_neg)
+tree <- phy_tree(Infected)
+
+# If taxa are rows in your OTU table, transpose them
+if(taxa_are_rows(otu_table_insti)) {
+  otu_table_insti <- t(otu_table_insti)
+}
+if(taxa_are_rows(otu_table_no_insti)) {
+  otu_table_no_insti <- t(otu_table_no_insti)
+}
+
+# Calculate Faith's PD
+pd_insti <- pd(otu_table_insti, tree)
+pd_no_insti <- pd(otu_table_no_insti, tree)
+
+# Wilcoxon test
+#wilcox.test(pd_insti$PD, pd_no_insti$PD)
+
+# Create a boxplot to visualize Faith's PD for depression status
+pd_combined <- data.frame(
+  Group = c(rep("INSTI+", nrow(pd_insti)), rep("INSTI-", nrow(pd_no_insti))),
+  Faith_PD = c(pd_insti$PD, pd_no_insti$PD)
+)
+
+# Plot the boxplot with appropriate title and colors
+faiths_insti <- ggplot(pd_combined, aes(x = Group, y = Faith_PD, fill = Group)) +
+  geom_boxplot() +
+  theme_bw() +
+  labs(title = "Faith's Phylogenetic Diversity by INSTI Status",
+       y = "Faith's PD",
+       x = "") +
+  scale_fill_manual(values = c("INSTI+" = "darkblue", "INSTI-" = "darkgrey"))+
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
+
+faiths_insti
+
 #### Beta Diversity ####
 # Calculate distances
 unifrac_dist <- phyloseq::distance(mpt_rare, method = "unifrac", weighted = FALSE)
 weighted_unifrac_dist <- phyloseq::distance(mpt_rare, method = "unifrac", weighted = TRUE)
+
+# This are for testing different mattices for pcoa (So far best variance are Weighted unifrac and Bray)
+bray_dist <- phyloseq::distance(mpt_rare, method = "bray")
+jaccard_dist <- phyloseq::distance(mpt_rare, method = "jaccard")
+
+bray_dist_hh <- as.dist(as.matrix(bray_dist)[hiv_healthy_samples, hiv_healthy_samples])
+jaccard_dist_hh <- as.dist(as.matrix(jaccard_dist)[hiv_healthy_samples, hiv_healthy_samples])
 
 # ---- Unweighted Unifrac HIV+/Healthy -----
 # Create phyloseq object first
@@ -313,7 +395,6 @@ pcoa_hh_plot <- plot_ordination(hiv_healthy_phyloseq,
                   scale_color_manual(values = c("HIV+" = "firebrick", "HIV-/HCV-" = "turquoise")) +
                   theme(plot.title = element_text(hjust = 0.5))
 
-# Display the plot
 pcoa_hh_plot
 
 # Run PERMANOVA
@@ -567,12 +648,15 @@ print(permanova_result_insti_2)
 ##### Saving #####
 save(mpt_final, file="mpt_final.RData")
 save(mpt_rare, file="mpt_rare.RData")
+save(mpt_final_monoinfected, file="mpt_final_monoinfected.RData")
 ggsave("Pie_chart_types.png", plot = pie_chart_types)
 ggsave("Pie_chart_INSTI.png", plot = pie_chart_INSTI)
 ggsave("HH_Shannon.png", plot = shannon_hh)
 ggsave("HH_Faiths.png", plot = faiths_hh)
 ggsave("HDP_Shannon.png", plot = shannon_hdp)
 ggsave("HDP_Faiths.png", plot = faiths_hdp)
+ggsave("INSTI_Shannon.png", plot = shannon_insti)
+ggsave("INSTI_Faiths.png", plot = faiths_insti)
 ggsave("HH_unweighted_pcoa.png", plot = pcoa_hh_plot)
 ggsave("HDP_unweighted_pcoa.png", plot = pcoa_hdp_plot)
 ggsave("INSTI_unweighted_pcoa.png", plot = pcoa_insti_plot)
