@@ -1,5 +1,7 @@
 
-
+library(phyloseq)
+library(ape) 
+library(tidyverse)
 #### Create RObject from the beginning #### 
 
 ## Load data ##
