@@ -83,6 +83,109 @@ all_indic_species <- insti_isa |>
 
 all_indic_species
 
-ggsave(filename = 'indic_plot.png',
+ggsave(filename = 'indic_class_plot.png',
        all_indic_species,
        height = 6, width = 5)
+
+## Plotting by Indicator Species Order
+
+# for INSTI
+INSTI_indic_orders <- filter(insti_isa, s.YES == 1) |> 
+  select(stat:Species) |> 
+  arrange(desc(stat))
+
+summary(INSTI_indic_orders)
+
+group_by(INSTI_indic_species, Order) |> 
+  summarize(count = n()) |> 
+  ggplot(aes(x = Order, y = count)) +
+  geom_bar(stat = "identity") +
+  labs(title = "INSTI Indicator Species") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# for no INSTI
+no_INSTI_indic_orders <- filter(insti_isa, s.NO == 1) |> 
+  select(stat:Species) |> 
+  arrange(desc(stat))
+
+summary(no_INSTI_indic_orders)
+
+group_by(no_INSTI_indic_species, Order) |> 
+  summarize(count = n()) |> 
+  ggplot(aes(x = Order, y = count)) +
+  geom_bar(stat = "identity") +
+  labs(title = "INSTI Indicator Species") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# together
+all_indic_orders <- insti_isa |> 
+  mutate(insti = case_when(index == 1 ~ "no INSTI",
+                           index == 2 ~ "INSTI")) |>
+  select(stat:insti) |>
+  arrange(desc(stat)) |> 
+  group_by(Order, insti) |> 
+  summarize(count = n()) |> 
+  ggplot(aes(x = Order, y = count)) +
+  geom_bar(stat = "identity") +
+  facet_grid(rows = vars(insti)) +
+  labs(title = "INSTI Indicator Species") +
+  xlab("Bacterial Order") +
+  ylab("Count") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 11))
+
+all_indic_orders
+
+ggsave(filename = 'indic_order_plot.png',
+       all_indic_orders,
+       height = 6, width = 9)
+
+## Plotting by Indicator Species Family
+# for INSTI
+INSTI_indic_families <- filter(insti_isa, s.YES == 1) |> 
+  select(stat:Species) |> 
+  arrange(desc(stat))
+
+summary(INSTI_indic_families)
+
+group_by(INSTI_indic_species, Family) |> 
+  summarize(count = n()) |> 
+  ggplot(aes(x = Family, y = count)) +
+  geom_bar(stat = "identity") +
+  labs(title = "INSTI Indicator Species") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# for no INSTI
+no_INSTI_indic_families <- filter(insti_isa, s.NO == 1) |> 
+  select(stat:Species) |> 
+  arrange(desc(stat))
+
+summary(no_INSTI_indic_families)
+
+group_by(no_INSTI_indic_species, Family) |> 
+  summarize(count = n()) |> 
+  ggplot(aes(x = Family, y = count)) +
+  geom_bar(stat = "identity") +
+  labs(title = "INSTI Indicator Species") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# together
+all_indic_families <- insti_isa |> 
+  mutate(insti = case_when(index == 1 ~ "no INSTI",
+                           index == 2 ~ "INSTI")) |>
+  select(stat:insti) |>
+  arrange(desc(stat)) |> 
+  group_by(Family, insti) |> 
+  summarize(count = n()) |> 
+  ggplot(aes(x = Family, y = count)) +
+  geom_bar(stat = "identity") +
+  facet_grid(rows = vars(insti)) +
+  labs(title = "INSTI Indicator Species") +
+  xlab("Bacterial Family") +
+  ylab("Count") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 11))
+
+all_indic_families
+
+ggsave(filename = 'indic_family_plot.png',
+       all_indic_families,
+       height = 6, width = 9)
