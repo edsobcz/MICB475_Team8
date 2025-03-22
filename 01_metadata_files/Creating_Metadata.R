@@ -64,3 +64,23 @@ sub_metadata <- cross_exp_16S_run_meta_Lmeta_final[,c("sample_name","run_accessi
 #Save modified version of metadata file
 write_tsv(sub_metadata, "modified_metadata.tsv")
 
+#### Test for longer metadata file  ####
+sub_metadata_long <- cross_exp_16S_run_meta_Lmeta_final[,c("sample_name","run_accession","sample_type","regimen_type","combo_regimen","priorvisitreg","current_regimen","hiv_status_clean","hcv","bdi_ii","diabetes","ethnicity","host_age","race","sex","host_height","host_weight")] %>%
+  mutate(INSTI_drug_current = case_when(str_detect(current_regimen, paste(insti_drugs, collapse="|")) ~ "YES", TRUE ~ "NO")) %>%
+  mutate(INSTI_drug_prior = case_when(str_detect(priorvisitreg, paste(insti_drugs, collapse="|")) ~ "YES", TRUE ~ "NO")) %>%
+  mutate(diabetes = ifelse(diabetes == "", "not applicable", diabetes)) %>%
+  mutate(ethnicity = ifelse(ethnicity == "", "not applicable", ethnicity)) %>%
+  mutate(race = ifelse(race %in% c("", "11135"), "not provided", race)) %>%
+  mutate(sex = case_when(
+    sex %in% c("1", "male") ~ "male",
+    sex %in% c("2", "female") ~ "female",
+    sex %in% c("", "not provided") ~ "not provided",
+    TRUE ~ "not applicable"
+  )) %>%
+  select("run_accession","sample_name","sample_type","INSTI_drug_current","INSTI_drug_prior","current_regimen","hiv_status_clean","hcv","bdi_ii","diabetes","ethnicity","host_age","race","sex","host_height","host_weight") %>%
+  rename(experiment_name = sample_name,`sample-id` = run_accession) #Note: this renaming is done for qiime2 metadata requirments.
+
+
+#Save modified version of metadata file
+write_tsv(sub_metadata_long, "modified_metadata_long.tsv")
+

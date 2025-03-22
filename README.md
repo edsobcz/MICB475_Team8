@@ -1,4 +1,36 @@
 ##### MICB 475 Team 8
+# March 18 2025 Team Meeting
+### Agenda:
+- discuss differential expression analysis results
+- review result for diversity metrics and taxonomic analysis
+- identify potential research directions for notable taxa
+- clarify next steps for ML development
+
+### Meeting Minutes
+- No significance in alpha or beta between HIV + and HIV - patients : conflicts literature but supports orginial paper
+- No difference in beta or alpha depression or not depressed
+- No difference in beta INSTI pos or neg
+  - We haven't done alpha yet for this
+- The depression and INSTI weighted/unweighted unifrac have the same pattern : tells us there is probably some other factor that is causing the difference
+- We want to look at beta diversity metrics and see if there is another variable: could look into sex
+- Save core microbiome figure
+- Indicator species: resolved for class, order and family
+  - the code was using all samples
+  - subset to just HIV+ samples and it resolved down to 3 genus
+  - did not glom by genus at the start: change to glom at genus and then look at class
+  - do not use rarified data
+- Change to loading in the rare and final objects instead of redoing it every script
+- Core Microbiome
+  - if you used the recommended detection and prevelance than nothing comes up
+  - lowered both of these values: detection 0.005 and prevalence 0.35
+  - we want to resolve to the same level in different analysis' (indicator and differential) so that we can compare
+  - do not glom at genus because a lot of the changes are at species
+ - Differential Expression
+   - set as log2fold change
+
+  - Next Steps
+      - confirm with Evelyn if we can skip glom by genus
+      - we can't glom to genus, we lose a lose of important data. If anything, let's glom to species (this would join separate ASVs that are the same down to the species level), then graph to class
 # March 10 2025 Team Meeting
 ### Agenda:
 - discuss indicator species analysis results

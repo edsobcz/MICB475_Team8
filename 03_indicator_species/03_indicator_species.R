@@ -7,11 +7,14 @@ library(indicspecies)
 
 # loading in the phyloseq object
 load("mpt_rare.RData")
+# Uncomment the following line to load Monoinfected mpt final with updated file path
+# load("mpt_final_monoinfected.RData")
 
+set.seed(1)
 
 ### Perform indicator species analysis ###
+Mono_Infected <- subset_samples(mpt_final, hiv_status_clean == "HIV+"& hcv == "NO")
 insti_relative <- transform_sample_counts(mpt_rare, fun=function(x) x/sum(x))
-set.seed(123)
 
 isa_output <- multipatt(t(otu_table(insti_relative)), 
                         cluster = sample_data(insti_relative)$INSTI_drug_current)
@@ -34,8 +37,10 @@ insti_isa
 ### Cleaning up output ###
 # for INSTI
 INSTI_indic_species <- filter(insti_isa, s.YES == 1) |> 
-  select(stat:Species) |> 
+  select(ASV:Species) |> 
   arrange(desc(stat))
+
+I
 
 summary(INSTI_indic_species)
 
@@ -63,7 +68,7 @@ group_by(no_INSTI_indic_species, Class) |>
 # together
 all_indic_species <- insti_isa |> 
   mutate(insti = case_when(index == 1 ~ "no INSTI",
-                           index == 2 ~ "INSTI")) |>
+                           index == 2 ~ "INSTI")) |> 
   select(stat:insti) |>
   arrange(desc(stat)) |> 
   group_by(Class, insti) |> 
@@ -72,120 +77,41 @@ all_indic_species <- insti_isa |>
     geom_bar(stat = "identity") +
     facet_grid(rows = vars(insti)) +
     labs(title = "INSTI Indicator Species") +
-    xlab("Bacterial Class") +
-    ylab("Count") +
-    scale_x_discrete(labels = c("c__Actinobacteria" = "Actinobacteria", 
-                                "c__Alphaproteobacteria" = "Alphaproteobacteria", 
-                                "c__Bacilli" = "Bacilli", "c__Bacteroidia" = "Bacteroidia", 
-                                "c__Clostridia" = "Clostridia", "c__Desulfovibrionia" = "Desulfovibrionia", 
-                                "c__Gammaproteobacteria" = "Gammaproteobacteria", "c__Negativicutes" = "Negativicutes")) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 11))
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 all_indic_species
 
-ggsave(filename = 'indic_class_plot.png',
-       all_indic_species,
-       height = 6, width = 5)
+#### Updated: SEBASTIAN Indicator Species/Taxa Analysis ####
+# Glom to Species level to prevent loose of significant ASVs
+set.seed(1234)
+mpt_genus <- tax_glom(Mono_Infected, "Species", NArm = FALSE)
+mpt_genus_RA <- transform_sample_counts(mpt_genus, fun=function(x) x/sum(x))
 
-## Plotting by Indicator Species Order
+#ISA
+isa_mpt <- multipatt(t(otu_table(mpt_genus_RA)), cluster = sample_data(mpt_genus_RA)$`INSTI_drug_current`)
+summary(isa_mpt)
+taxtable <- tax_table(mpt_final) %>% as.data.frame() %>% rownames_to_column(var="ASV")
 
-# for INSTI
-INSTI_indic_orders <- filter(insti_isa, s.YES == 1) |> 
-  select(stat:Species) |> 
-  arrange(desc(stat))
-
-summary(INSTI_indic_orders)
-
-group_by(INSTI_indic_species, Order) |> 
-  summarize(count = n()) |> 
-  ggplot(aes(x = Order, y = count)) +
-  geom_bar(stat = "identity") +
-  labs(title = "INSTI Indicator Species") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-# for no INSTI
-no_INSTI_indic_orders <- filter(insti_isa, s.NO == 1) |> 
-  select(stat:Species) |> 
-  arrange(desc(stat))
-
-summary(no_INSTI_indic_orders)
-
-group_by(no_INSTI_indic_species, Order) |> 
-  summarize(count = n()) |> 
-  ggplot(aes(x = Order, y = count)) +
-  geom_bar(stat = "identity") +
-  labs(title = "INSTI Indicator Species") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# consider that your table is only going to be resolved up to the genus level, be wary of 
+# anything beyond the glomed taxa level
+inst_isa <- isa_mpt$sign %>%
+  rownames_to_column(var="ASV") %>%
+  left_join(taxtable) %>%
+  filter(p.value<0.05) 
 
 # together
-all_indic_orders <- insti_isa |> 
+all_indic_species <- inst_isa |> 
   mutate(insti = case_when(index == 1 ~ "no INSTI",
-                           index == 2 ~ "INSTI")) |>
+                           index == 2 ~ "INSTI")) |> 
   select(stat:insti) |>
   arrange(desc(stat)) |> 
-  group_by(Order, insti) |> 
+  group_by(Class, insti) |> 
   summarize(count = n()) |> 
-  ggplot(aes(x = Order, y = count)) +
+  ggplot(aes(x = Class, y = count)) +
   geom_bar(stat = "identity") +
   facet_grid(rows = vars(insti)) +
   labs(title = "INSTI Indicator Species") +
-  xlab("Bacterial Order") +
-  ylab("Count") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 11))
-
-all_indic_orders
-
-ggsave(filename = 'indic_order_plot.png',
-       all_indic_orders,
-       height = 6, width = 9)
-
-## Plotting by Indicator Species Family
-# for INSTI
-INSTI_indic_families <- filter(insti_isa, s.YES == 1) |> 
-  select(stat:Species) |> 
-  arrange(desc(stat))
-
-summary(INSTI_indic_families)
-
-group_by(INSTI_indic_species, Family) |> 
-  summarize(count = n()) |> 
-  ggplot(aes(x = Family, y = count)) +
-  geom_bar(stat = "identity") +
-  labs(title = "INSTI Indicator Species") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-# for no INSTI
-no_INSTI_indic_families <- filter(insti_isa, s.NO == 1) |> 
-  select(stat:Species) |> 
-  arrange(desc(stat))
+all_indic_species
 
-summary(no_INSTI_indic_families)
-
-group_by(no_INSTI_indic_species, Family) |> 
-  summarize(count = n()) |> 
-  ggplot(aes(x = Family, y = count)) +
-  geom_bar(stat = "identity") +
-  labs(title = "INSTI Indicator Species") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-# together
-all_indic_families <- insti_isa |> 
-  mutate(insti = case_when(index == 1 ~ "no INSTI",
-                           index == 2 ~ "INSTI")) |>
-  select(stat:insti) |>
-  arrange(desc(stat)) |> 
-  group_by(Family, insti) |> 
-  summarize(count = n()) |> 
-  ggplot(aes(x = Family, y = count)) +
-  geom_bar(stat = "identity") +
-  facet_grid(rows = vars(insti)) +
-  labs(title = "INSTI Indicator Species") +
-  xlab("Bacterial Family") +
-  ylab("Count") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 11))
-
-all_indic_families
-
-ggsave(filename = 'indic_family_plot.png',
-       all_indic_families,
-       height = 6, width = 9)
