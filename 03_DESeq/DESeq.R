@@ -6,13 +6,14 @@ library(indicspecies)
 
 
 #### Load data ####
-load("mpt_final.RData")
+load("longmeta_phyloseq_rare.RData")
+rarefied <- mpt_rare
 
 # Uncomment the following line to load Monoinfected mpt final with updated file path
 # load("mpt_final_monoinfected.RData")
 
 #### DESeq ####
-Mono_Infected <- subset_samples(mpt_final, hiv_status_clean == "HIV+"& hcv == "NO")
+Mono_Infected <- subset_samples(rarefied, hiv_status_clean == "HIV+"& hcv == "NO")
 mpt_plus1 <- transform_sample_counts(Mono_Infected, function(x) x+1)
 mpt_deseq <- phyloseq_to_deseq2(mpt_plus1, ~`INSTI_drug_current`)
 DESEQ_mpt <- DESeq(mpt_deseq)
@@ -43,21 +44,26 @@ sigASVs <- res %>%
 View(sigASVs)
 # Get only asv names
 sigASVs_vec <- sigASVs %>%
+  filter(!is.na(Genus)) |> 
   pull(ASV)
 
 # Prune phyloseq file
-mpt_DESeq <- prune_taxa(sigASVs_vec,mpt_final)
+mpt_DESeq <- prune_taxa(sigASVs_vec,rarefied)
 sigASVs <- tax_table(mpt_DESeq) %>% as.data.frame() %>%
   rownames_to_column(var="ASV") %>%
   right_join(sigASVs) %>%
   arrange(log2FoldChange) %>%
   mutate(Genus = make.unique(Genus)) %>%
-  mutate(Genus = factor(Genus, levels=unique(Genus)))
+  mutate(Genus = factor(Genus, levels=unique(Genus))) |> 
+  filter(!is.na(Genus))
 
-ggplot(sigASVs) +
+sigASVs_bar <- ggplot(sigASVs) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
 
+sigASVs_bar
+
 #### Saving files #####
 ggsave(filename="vol_plot.png",vol_plot)
+ggsave("sigASVs_bar.png", sigASVs_bar)
