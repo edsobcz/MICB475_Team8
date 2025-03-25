@@ -13,7 +13,7 @@ load("mpt_rare.RData")
 set.seed(1)
 
 ### Perform indicator species analysis ###
-Mono_Infected <- subset_samples(mpt_final, hiv_status_clean == "HIV+"& hcv == "NO")
+Mono_Infected <- subset_samples(mpt_rare, hiv_status_clean == "HIV+"& hcv == "NO")
 insti_relative <- transform_sample_counts(mpt_rare, fun=function(x) x/sum(x))
 
 isa_output <- multipatt(t(otu_table(insti_relative)), 
@@ -84,13 +84,13 @@ all_indic_species
 #### Updated: SEBASTIAN Indicator Species/Taxa Analysis ####
 # Glom to Species level to prevent loose of significant ASVs
 set.seed(1234)
-mpt_genus <- tax_glom(Mono_Infected, "Species", NArm = FALSE)
+mpt_genus <- tax_glom(Mono_Infected, "Genus", NArm = FALSE)
 mpt_genus_RA <- transform_sample_counts(mpt_genus, fun=function(x) x/sum(x))
 
 #ISA
 isa_mpt <- multipatt(t(otu_table(mpt_genus_RA)), cluster = sample_data(mpt_genus_RA)$`INSTI_drug_current`)
 summary(isa_mpt)
-taxtable <- tax_table(mpt_final) %>% as.data.frame() %>% rownames_to_column(var="ASV")
+taxtable <- tax_table(mpt_rare) %>% as.data.frame() %>% rownames_to_column(var="ASV")
 
 # consider that your table is only going to be resolved up to the genus level, be wary of 
 # anything beyond the glomed taxa level
@@ -114,4 +114,7 @@ all_indic_species <- inst_isa |>
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 all_indic_species
+
+# saving indicator species as an object
+write_csv(inst_isa, file = "insti_indicspecies.csv")
 

@@ -11,7 +11,7 @@ library(metagMisc)
 load("mpt_final.RData")
 
 # Keep only HIV monoinfected
-mpt_mono <- subset_samples(mpt_final, hcv == "NO" & hiv_status_clean == "HIV+")
+mpt_mono <- subset_samples(mpt_rare, hcv == "NO" & hiv_status_clean == "HIV+")
 
 # Glom to Genus and converty to relative abundance
 # mpt_genus <- tax_glom(mpt_mono, "Genus", NArm = FALSE)

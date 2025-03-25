@@ -17,13 +17,13 @@ load("mpt_final.RData")
 
 ## Load data ##
 # Change file paths as necessary
-meta <- read_delim("modified_metadata.tsv", delim="\t")
-otu <- read_delim(file = "feature-table.txt", delim="\t", skip=1)
-tax <- read_delim("taxonomy.tsv", delim="\t")
-phylotree <- read.tree("tree.nwk")
+# meta <- read_delim("modified_metadata.tsv", delim="\t")
+otu <- read_delim(file = "../01_export_files/table_export/feature-table.txt", delim="\t", skip=1)
+tax <- read_delim("../01_export_files/taxonomy_export/taxonomy.tsv", delim="\t")
+phylotree <- read.tree("../01_export_files/rooted_tree_export/tree.nwk")
 
 # Metadata file with 7 more columns
-meta_long <- read_delim("modified_metadata_long.tsv", delim="\t")
+meta_long <- read_delim("../01_metadata_files/modified_metadata_long.tsv", delim="\t")
 ## Format Files ##
 
 # OTU table
@@ -32,14 +32,14 @@ rownames(otu_mat) <- otu$`#OTU ID`
 OTU <- otu_table(otu_mat, taxa_are_rows = TRUE) 
 
 #Metadata 
-samp_df <- as.data.frame(meta[,-1])
-rownames(samp_df)<- meta$'sample-id'
-SAMP <- sample_data(samp_df)
+#samp_df <- as.data.frame(meta[,-1])
+#rownames(samp_df)<- meta$'sample-id'
+#SAMP <- sample_data(samp_df)
 
 #Metadata Long
-#samp_df <- as.data.frame(meta_long[,-1])
-#rownames(samp_df)<- meta_long$'sample-id'
-#SAMP <- sample_data(samp_df)
+samp_df <- as.data.frame(meta_long[,-1])
+rownames(samp_df)<- meta_long$'sample-id'
+SAMP <- sample_data(samp_df)
 
 #Taxonomy 
 # Convert taxon strings to a table with separate taxa rank columns
@@ -55,6 +55,8 @@ TAX <- tax_table(tax_mat)
 mpt <- phyloseq(OTU, SAMP, TAX, phylotree)
 
 ######### ANALYZE ##########
+set.seed(1234)
+
 # Remove non-bacterial sequences, if any
 mpt_filt <- subset_taxa(mpt,  Domain == "d__Bacteria" & Class!="c__Chloroplast" & Family !="f__Mitochondria")
 # Remove ASVs that have less than 5 counts total
@@ -646,8 +648,8 @@ print(permanova_result_insti_2)
 
 
 ##### Saving #####
-save(mpt_final, file="mpt_final.RData")
-save(mpt_rare, file="mpt_rare.RData")
+save(mpt_final, file="../01_phyloseq_objects/longmeta_phyloseq_unrare.RData")
+save(mpt_rare, file="../01_phyloseq_objects/longmeta_phyloseq_rare.RData")
 save(mpt_final_monoinfected, file="mpt_final_monoinfected.RData")
 ggsave("Pie_chart_types.png", plot = pie_chart_types)
 ggsave("Pie_chart_INSTI.png", plot = pie_chart_INSTI)
