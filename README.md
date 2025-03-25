@@ -1,6 +1,7 @@
 ##### MICB 475 Team 8
 # March 25 2025 Team Meeting
 ### Agenda:
+- discuss KNN model progress and existing issues with data structure
 - discuss random forest model (Jordan and Emily W)
 
 # March 18 2025 Team Meeting
