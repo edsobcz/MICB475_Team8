@@ -4,6 +4,57 @@
 - discuss KNN model progress and existing issues with data structure
 - discuss random forest model (Jordan and Emily W)
 
+### Meeting Minutes
+- make sure indicator taxa are above a stat of 0.8 or higher (or we can do 0.7)
+- we should glom to the genus level, and don't look at the species
+- we have 8 indicators, but don't know the stat
+- in INSTI+, there's more anaerobic species
+- we should do a functional analysis
+- we should look into the 7 unique ones that are a part of the core microbiome
+- there are individual taxa that seem to be important
+- it's NRTI-INSTI+ that restores the diversity, but we are mostly looking at NRTI+INSTI+ because almost everyone is on NRTI
+- -->>>>lets look to see how many people are not on NRTIs
+- = nothing for a and B diversity
+- = No indicator species (all off the indicator species have a low stat (the highest is 0.5))
+- KNN: turn indic species wide, then use it into random forest. Lets use the 7 from the core microbiome, instead of the (nonexistent) indicator taxa
+- join the OTU table from phyloseq to the metadata
+- modelling only works well if you have 2 groups that are significantly different
+- looking at the B diversity, something else is causing a difference but its not NRTI/INSTI/HIV...
+- Evelyn thinks we should do a functional analysis !!! we might get something exciting functionally since we didn't get anything exciting taxonomically
+- once you hit R, there might be a problem with the package that contains ggpicrust
+
+fig 1: diversity metrics
+alpha, 1Beta: nothing different (which matches with original paper)
+for alpha: INSTI+/INSTI- shannon (panelA), weighted unifrac (panelB)
+
+fig 2: core microbiome (at genus level)
+- resolve what the 7 unique ones are
+a: core microbiome venn diagram
+b: taxa bar plot
+- with the 7 at the genus level, group them together based on INSTI (there should be 2 bars, with them stacked)
+
+fig 3: deseq (?)
+anything that's the 7 from the core microbiome, colour them in orange
+that one is genus as well
+- keep it at the same level as figure 2
+
+fig 4: reserve for functional analysis
+between INSTI+/INSTI-
+a: bar graph
+b: volcano plot
+no heat map needed here (unless the patterns are really obvious)
+
+fig 5: modelling
+
+supplemental
+1: pir charts with sample sizes (absolute numbers) (so we can reference it in the methods section)
+
+2 (same as fig 1): shannon & weighted unifrac
+1a. HIV+/HIV-
+1b. depression+/depression-
+
+by next week: have all the figures done! :)
+
 # March 18 2025 Team Meeting
 ### Agenda:
 - discuss differential expression analysis results
