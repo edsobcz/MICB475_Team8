@@ -79,7 +79,12 @@ metadata = metadata[metadata$`sample-id` %in% abun_samples,] #making sure the fi
 abundance_daa_results_df <- pathway_daa(abundance = abundance_data_filtered %>% column_to_rownames("pathway"), 
                                         metadata = metadata, group = "INSTI", daa_method = "DESeq2")
 
-#trying to troubleshoot the problem
+
+#### Trying to troubleshoot the problem ####
+
+#https://rdrr.io/cran/ggpicrust2/src/R/pathway_daa.R
+
+
 sum(is.na(abundance_data_filtered))
 sum(is.na(metadata$INSTI))
 table(metadata$INSTI)
@@ -93,7 +98,52 @@ print(missing_in_metadata)
 missing_in_abundance <- setdiff(metadata$`sample-id`, rownames(abundance_data_filtered))
 print(missing_in_abundance)
 
+filtered_metadata <- metadata[metadata$`sample-id` %in% colnames(abundance_data_filtered), ]
 
+
+write.table(abundance_data_filtered, "abundance_data_filtered", sep = "\t", row.names = FALSE, col.names = TRUE)
+write.table(metadata, "metadata", sep = "\t", row.names = FALSE, col.names = TRUE)
+
+
+
+table(metadata$INSTI, useNA = "always")
+
+abundance_matrix <- abundance_data_filtered %>% column_to_rownames("pathway")
+any(rownames(abundance_matrix) =="" | is.na(rownames(abundance_matrix)))
+
+all(colnames(abundance_matrix) %in% metadata$`sample-id`)
+all(metadata$`sample-id` %in% colnames(abundance_matrix))
+
+
+head(rownames(abundance_matrix))
+sum(is.na(rownames(abundance_matrix)))
+sum(rownames(abundance_matrix) == "")
+
+
+sum(is.na(metadata))
+sum(is.na(metadata$`sample-id`))
+
+metadata_noNA <- metadata %>%
+  select(sample_id = `sample-id`, INSTI)
+
+
+metadata$INSTI <- factor(metadata$INSTI)
+metadata_noNA$INSTI <- factor(metadata_noNA$INSTI)
+
+
+all(colnames(abundance_matrix) %in% rownames(metadata))
+all(metadata$`sample-id` %in% colnames(abundance_matrix))
+
+
+rownames(metadata) <- metadata$`sample-id`
+metadata  =as.data.frame(metadata)
+
+common_samples <- intersect(colnames(abundance_matrix), rownames(metadata))
+abundance_matrix <- abundance_matrix[, common_samples]
+metadata <- metadata[common_samples,]
+
+
+#### Resuming with the normal code ####
 
 
 # Annotate MetaCyc pathway so they are more descriptive
