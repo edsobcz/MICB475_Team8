@@ -20,7 +20,10 @@ for (pkg in pkgs) {
 # when asked if you want to update all, some or none please type "n" for none
 
 # After installing all of its above dependencies, install ggpicrust2
-install.packages("ggpicrust2")
+install.packages("GGally")
+install.packages("MicrobiomeStat")
+install.packages("ggpicrust2_1.7.3.tar.gz")
+
 
 #### Load packages ####
 # Load all necessary libraries
@@ -32,22 +35,29 @@ library(ggprism)
 library(patchwork)
 library(DESeq2)
 library(ggh4x)
+library(dplyr)
 
 
 #### Import files and preparing tables ####
-#Importing the pathway PICrsut2
-abundance_file <- "picrust2_out_pipeline/pathways_out/path_abun_unstrat.tsv"
+#Importing the pathway PICrusut2
+abundance_file <- "pathway_abundance.tsv"
 abundance_data <- read_delim(abundance_file, delim = "\t", col_names = TRUE, trim_ws = TRUE)
 abundance_data  =as.data.frame(abundance_data)
 
 #Import your metadata file, no need to filter yet
-metadata <- read_delim("mpt_metadata.tsv")
+metadata1 <- read_delim("modified_metadata_long.tsv")
 
-#Example Looking at subject number
-#If you have multiple variants, filter your metadata to include only 2 at a time
+#filtering to keep only HIV+HIV-, and combine INSTI columns
+metadata_tidy <- metadata1  %>%
+  mutate(INSTI = if_else(INSTI_drug_current == "YES" | INSTI_drug_prior == "YES", "YES", "NO")) %>%
+  filter(hcv == "NO") %>%
+  filter(hiv_status_clean == "HIV+")
+
+#Example Looking at subject number (for us: INSTI)
+#If you have multiple variants, filter your metadata to include only 2 at a time (doesn't apply for us)
 
 #Remove NAs for your column of interest in this case subject
-metadata = metadata[!is.na(metadata$subject),]
+metadata = metadata_tidy[!is.na(metadata_tidy$INSTI),]
 
 #Filtering the abundance table to only include samples that are in the filtered metadata
 sample_names = metadata$'sample-id'
@@ -67,7 +77,24 @@ metadata = metadata[metadata$`sample-id` %in% abun_samples,] #making sure the fi
 #### DESEq ####
 #Perform pathway DAA using DESEQ2 method
 abundance_daa_results_df <- pathway_daa(abundance = abundance_data_filtered %>% column_to_rownames("pathway"), 
-                                        metadata = metadata, group = "subject", daa_method = "DESeq2")
+                                        metadata = metadata, group = "INSTI", daa_method = "DESeq2")
+
+#trying to troubleshoot the problem
+sum(is.na(abundance_data_filtered))
+sum(is.na(metadata$INSTI))
+table(metadata$INSTI)
+str(abundance_data_filtered)
+str(metadata)
+all(rownames(abundance_data_filtered) %in% metadata$`sample-id`)
+
+missing_in_metadata <- setdiff(rownames(abundance_data_filtered), metadata$`sample-id`)
+print(missing_in_metadata)
+
+missing_in_abundance <- setdiff(metadata$`sample-id`, rownames(abundance_data_filtered))
+print(missing_in_abundance)
+
+
+
 
 # Annotate MetaCyc pathway so they are more descriptive
 metacyc_daa_annotated_results_df <- pathway_annotation(pathway = "MetaCyc", 
