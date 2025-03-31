@@ -9,15 +9,13 @@ library(metagMisc)
 set.seed(1234)
 
 # load data
-load("longmeta_phyloseq_rare.RData")
-rarefied <- mpt_rare
+load("longmeta_phyloseq_unrare.RData")
 
 # Keep only HIV monoinfected
-mono <- subset_samples(rarefied, hcv == "NO" & hiv_status_clean == "HIV+")
+mono <- subset_samples(mpt_final, hcv == "NO" & hiv_status_clean == "HIV+")
 
 # Glom to Genus and converty to relative abundance
-genus <- tax_glom(mono, "Genus", NArm = FALSE)
-phyloseq_RA <- transform_sample_counts(genus, fun=function(x) x/sum(x))
+phyloseq_RA <- mono %>% tax_glom("Genus", NArm = FALSE) %>% transform_sample_counts(fun=function(x) x/sum(x))
 
 ### Core Microbiome ###
 # Subset INSTI and no INSTI
@@ -30,10 +28,10 @@ neg_ASVs <- core_members(INSTI_neg, detection = 0.005, prevalence = 0.35)
 
 # detection of 0.005 and prevalence of 0.35 for prev analysis
 
-pos_pruned <- prune_taxa(pos_ASVs, rarefied) |>
+pos_pruned <- prune_taxa(pos_ASVs, mono) |>
   tax_table()
 
-neg_pruned <- prune_taxa(neg_ASVs, rarefied) |>
+neg_pruned <- prune_taxa(neg_ASVs, mono) |>
   tax_table()
 
 
