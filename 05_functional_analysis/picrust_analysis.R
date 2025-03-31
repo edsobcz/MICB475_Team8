@@ -98,78 +98,12 @@ abundance_daa_results_df <- pathway_daa(abundance = abundance_filtered,
                                         metadata = metadata_filtered, group = "INSTI", daa_method = "DESeq2")
 
 
-#### Trying to troubleshoot the problem ####
-
-#https://rdrr.io/cran/ggpicrust2/src/R/pathway_daa.R
-
-
-sum(is.na(abundance_data_filtered))
-sum(is.na(metadata$INSTI))
-table(metadata$INSTI)
-str(abundance_data_filtered)
-str(metadata)
-all(rownames(abundance_data_filtered) %in% metadata$`sample-id`)
-
-missing_in_metadata <- setdiff(rownames(abundance_data_filtered), metadata$`sample-id`)
-print(missing_in_metadata)
-
-missing_in_abundance <- setdiff(metadata$`sample-id`, rownames(abundance_data_filtered))
-print(missing_in_abundance)
-
-filtered_metadata <- metadata[metadata$`sample-id` %in% colnames(abundance_data_filtered), ]
-
-
-write.table(abundance_data_filtered, "abundance_data_filtered", sep = "\t", row.names = FALSE, col.names = TRUE)
-write.table(metadata, "metadata", sep = "\t", row.names = FALSE, col.names = TRUE)
-
-
-
-table(metadata$INSTI, useNA = "always")
-
-abundance_matrix <- abundance_data_filtered %>% column_to_rownames("pathway")
-any(rownames(abundance_matrix) =="" | is.na(rownames(abundance_matrix)))
-
-all(colnames(abundance_matrix) %in% metadata$`sample-id`)
-all(metadata$`sample-id` %in% colnames(abundance_matrix))
-
-
-head(rownames(abundance_matrix))
-sum(is.na(rownames(abundance_matrix)))
-sum(rownames(abundance_matrix) == "")
-
-
-sum(is.na(metadata))
-sum(is.na(metadata$`sample-id`))
-
-metadata_noNA <- metadata %>%
-  select(sample_id = `sample-id`, INSTI)
-
-
-metadata$INSTI <- factor(metadata$INSTI)
-metadata_noNA$INSTI <- factor(metadata_noNA$INSTI)
-
-
-all(colnames(abundance_matrix) %in% rownames(metadata))
-all(metadata$`sample-id` %in% colnames(abundance_matrix))
-
-
-rownames(metadata) <- metadata$`sample-id`
-metadata  =as.data.frame(metadata)
-
-common_samples <- intersect(colnames(abundance_matrix), rownames(metadata))
-abundance_matrix <- abundance_matrix[, common_samples]
-metadata <- metadata[common_samples,]
-
-
-#### Resuming with the normal code ####
-
-
 # Annotate MetaCyc pathway so they are more descriptive
 metacyc_daa_annotated_results_df <- pathway_annotation(pathway = "MetaCyc", 
                                                        daa_results_df = abundance_daa_results_df, ko_to_kegg = FALSE)
 
 # Filter p-values to only significant ones
-feature_with_p_0.05 <- abundance_daa_results_df %>% filter(p_values < 0.05)
+feature_with_p_0.05 <- abundance_daa_results_df %>% filter(p_values < 0.001)
 
 #Changing the pathway column to description for the results 
 feature_desc = inner_join(feature_with_p_0.05,metacyc_daa_annotated_results_df, by = "feature")
@@ -177,19 +111,22 @@ feature_desc$feature = feature_desc$description
 feature_desc = feature_desc[,c(1:7)]
 colnames(feature_desc) = colnames(feature_with_p_0.05)
 
+#Adding pathway column
+abundance_data_filtered <- abundance_data_filtered %>% tibble::rownames_to_column("pathway")  ##JD added, double check it does not mess up for later DeSEQ
+
 #Changing the pathway column to description for the abundance table
 abundance = abundance_data_filtered %>% filter(pathway %in% feature_with_p_0.05$feature)
 colnames(abundance)[1] = "feature"
 abundance_desc = inner_join(abundance,metacyc_daa_annotated_results_df, by = "feature")
 abundance_desc$feature = abundance_desc$description
-#this line will change for each dataset. 34 represents the number of samples in the filtered abundance table
-abundance_desc = abundance_desc[,-c(34:ncol(abundance_desc))] 
+#508 represents the number of samples in the filtered abundance table
+abundance_desc = abundance_desc[,-c(508:ncol(abundance_desc))] 
 
 # Generate a heatmap
-pathway_heatmap(abundance = abundance_desc %>% column_to_rownames("feature"), metadata = metadata, group = "subject")
+pathway_heatmap(abundance = abundance_desc %>% column_to_rownames("feature"), metadata = metadata, group = "INSTI")
 
 # Generate pathway PCA plot
-pathway_pca(abundance = abundance_data_filtered %>% column_to_rownames("pathway"), metadata = metadata, group = "subject")
+pathway_pca(abundance = abundance_data_filtered %>% column_to_rownames("pathway"), metadata = metadata, group = "INSTI")
 
 # Generating a bar plot representing log2FC from the custom deseq2 function
 
@@ -198,10 +135,11 @@ pathway_pca(abundance = abundance_data_filtered %>% column_to_rownames("pathway"
 # Lead the function in
 source("DESeq2_function.R")
 
+### Runs up to this point
 # Run the function on your own data
-res =  DEseq2_function(abundance_data_filtered, metadata, "subject")
+res =  DEseq2_function(abundance_data_filtered, metadata, "INSTI")
 res$feature =rownames(res)
-res_desc = inner_join(res,metacyc_daa_annotated_results_df, by = "feature")
+res_desc = inner_join(res,metacyc_daa_annotated_results_df, by = "INSTI")
 res_desc = res_desc[, -c(8:13)]
 View(res_desc)
 
