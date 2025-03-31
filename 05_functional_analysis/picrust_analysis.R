@@ -22,7 +22,10 @@ for (pkg in pkgs) {
 # After installing all of its above dependencies, install ggpicrust2
 install.packages("GGally")
 install.packages("MicrobiomeStat")
-install.packages("ggpicrust2_1.7.3.tar.gz")
+install.packages("ggh4x")
+install.packages("ggprism")
+install.packages("ggpicrust2")
+
 
 
 #### Load packages ####
@@ -37,47 +40,62 @@ library(DESeq2)
 library(ggh4x)
 library(dplyr)
 
+# First, remove the existing package
+remove.packages("ggpicrust2")
+
+BiocManager::install("ggpicrust2", force = TRUE)
+
+install.packages("ggpicrust2_1.7.3.tar.gz", repos = NULL, type = "source")
 
 #### Import files and preparing tables ####
-#Importing the pathway PICrusut2
-abundance_file <- "pathway_abundance.tsv"
-abundance_data <- read_delim(abundance_file, delim = "\t", col_names = TRUE, trim_ws = TRUE)
-abundance_data  =as.data.frame(abundance_data)
+# Importing the pathway abundance data from PICrust2
+abundance_data <- read_delim("pathway_abundance.tsv", delim = "\t", col_names = TRUE, trim_ws = TRUE)
+abundance_data <- as.data.frame(abundance_data)
 
-#Import your metadata file, no need to filter yet
-metadata1 <- read_delim("modified_metadata_long.tsv")
+# Import metadata file
+metadata <- read_delim("modified_metadata_long.tsv")
+metadata <- metadata[!is.na(metadata$INSTI_drug_current), ]
 
-#filtering to keep only HIV+HIV-, and combine INSTI columns
-metadata_tidy <- metadata1  %>%
+# Filtering to keep only HIV+HCV-, and combine INSTI columns
+metadata <- metadata %>%
   mutate(INSTI = if_else(INSTI_drug_current == "YES" | INSTI_drug_prior == "YES", "YES", "NO")) %>%
-  filter(hcv == "NO") %>%
-  filter(hiv_status_clean == "HIV+")
+  filter(hiv_status_clean == "HIV+" & hcv == "NO")
 
-#Example Looking at subject number (for us: INSTI)
-#If you have multiple variants, filter your metadata to include only 2 at a time (doesn't apply for us)
+# Filtering the abundance table to only include samples in filtered metadata
+sample_names <- metadata$'sample-id'
+sample_names <- append(sample_names, "pathway")
+abundance_data_filtered <- abundance_data[, colnames(abundance_data) %in% sample_names]
 
-#Remove NAs for your column of interest in this case subject
-metadata = metadata_tidy[!is.na(metadata_tidy$INSTI),]
+# Removing samples with all zeros
+abundance_data_filtered <- abundance_data_filtered[, colSums(abundance_data_filtered != 0) > 0]
 
-#Filtering the abundance table to only include samples that are in the filtered metadata
-sample_names = metadata$'sample-id'
-sample_names = append(sample_names, "pathway")
-abundance_data_filtered = abundance_data[, colnames(abundance_data) %in% sample_names] #This step is the actual filtering
+# Ensuring rownames are properly reset
+rownames(abundance_data_filtered) <- NULL
 
-#Removing individuals with no data that caused a problem for pathways_daa()
-abundance_data_filtered =  abundance_data_filtered[, colSums(abundance_data_filtered != 0) > 0]
+# Verify samples in metadata match samples in abundance_data
+abun_samples <- rownames(t(abundance_data_filtered[, -1]))
+metadata <- metadata[metadata$`sample-id` %in% abun_samples, ]
+metadata <- metadata %>%
+  select(-current_regimen, -bdi_ii, -host_height, -host_weight)
 
-#Ensuring the rownames for the abundance_data_filtered is empty. This is required for their functions to run.
-rownames(abundance_data_filtered) = NULL
+# Prepare data for DESeq2
+abundance_data_filtered <- abundance_data_filtered %>% column_to_rownames("pathway")
+abundance_data_filtered_matrix <- round(as.matrix(abundance_data_filtered))
 
-#verify samples in metadata match samples in abundance_data
-abun_samples = rownames(t(abundance_data_filtered[,-1])) #Getting a list of the sample names in the newly filtered abundance data
-metadata = metadata[metadata$`sample-id` %in% abun_samples,] #making sure the filtered metadata only includes these samples
+#### Pre-filter data for DESeq2 analysis ####
+# Remove pathways with all zeros
+abundance_filtered <- abundance_data_filtered_matrix[rowSums(abundance_data_filtered_matrix) > 0, ]
+
+# Remove samples with all zeros
+abundance_filtered <- abundance_filtered[, colSums(abundance_filtered) > 0]
+
+# Update metadata to match filtered samples
+metadata_filtered <- metadata[metadata$`sample-id` %in% colnames(abundance_filtered), ]
 
 #### DESEq ####
 #Perform pathway DAA using DESEQ2 method
-abundance_daa_results_df <- pathway_daa(abundance = abundance_data_filtered %>% column_to_rownames("pathway"), 
-                                        metadata = metadata, group = "INSTI", daa_method = "DESeq2")
+abundance_daa_results_df <- pathway_daa(abundance = abundance_filtered, 
+                                        metadata = metadata_filtered, group = "INSTI", daa_method = "DESeq2")
 
 
 #### Trying to troubleshoot the problem ####
