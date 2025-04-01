@@ -122,6 +122,7 @@ abundance_desc$feature = abundance_desc$description
 #508 represents the number of samples in the filtered abundance table
 abundance_desc = abundance_desc[,-c(508:ncol(abundance_desc))] 
 
+# Should it be the filtered one (metadata)?
 # Generate a heatmap
 pathway_heatmap(abundance = abundance_desc %>% column_to_rownames("feature"), metadata = metadata, group = "INSTI")
 
@@ -139,13 +140,13 @@ source("DESeq2_function.R")
 # Run the function on your own data
 res =  DEseq2_function(abundance_data_filtered, metadata, "INSTI")
 res$feature =rownames(res)
-res_desc = inner_join(res,metacyc_daa_annotated_results_df, by = "INSTI")
+res_desc = inner_join(res,metacyc_daa_annotated_results_df, by = "feature")
 res_desc = res_desc[, -c(8:13)]
 View(res_desc)
 
 # Filter to only include significant pathways
 sig_res = res_desc %>%
-  filter(pvalue < 0.05)
+  filter(pvalue < 0.001)
 # You can also filter by Log2fold change
 
 sig_res <- sig_res[order(sig_res$log2FoldChange),]

@@ -4,7 +4,6 @@
 
 DEseq2_function = function(abundance_table,metadata,col_of_interest){
   
-  
   DESeq2_metadata <- metadata
   DESeq2_abundance_mat <- abundance_table %>% column_to_rownames("pathway")
   
@@ -23,6 +22,7 @@ DEseq2_function = function(abundance_table,metadata,col_of_interest){
   # Loop through combinations and perform DESeq2 analysis
   message("Performing pairwise comparisons with DESeq2...")
   for (i in seq_len(ncol(DESeq2_combinations))) {
+
     j <- DESeq2_combinations[, i]
     
     # Subsetting the data for the current combination of groups
@@ -30,6 +30,8 @@ DEseq2_function = function(abundance_table,metadata,col_of_interest){
     DESeq2_metadata_sub <- DESeq2_metadata[DESeq2_sub_group,]
     DESeq2_abundance_mat_sub <- DESeq2_abundance_mat[, DESeq2_sub_group]
     DESeq2_abundance_mat_sub <- round(DESeq2_abundance_mat_sub)
+    # Need this line for code to run 
+    DESeq2_abundance_mat_sub <- DESeq2_abundance_mat_sub + 1
     
     # Creating DESeq2 object and performing analysis
     DESeq2_object <- DESeq2::DESeqDataSetFromMatrix(
@@ -37,10 +39,12 @@ DEseq2_function = function(abundance_table,metadata,col_of_interest){
       colData = DESeq2_metadata_sub,
       design = ~ Group_group_nonsense
     )
+    
     DESeq2_object <- BiocGenerics::estimateSizeFactors(DESeq2_object, type = "poscounts")
     DESeq2_object_finish <- DESeq2::DESeq(DESeq2_object)
     DESeq2_results[[i]] <- DESeq2::results(DESeq2_object_finish)
     results = as.data.frame(DESeq2_results)
+
   }
   
   return(results)
