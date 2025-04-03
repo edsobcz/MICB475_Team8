@@ -57,19 +57,32 @@ pos_vec <- pruned_pos_df |> pull(Genus)
 unique_insti_genus <- subset_taxa(core_pos_taxa, !(Genus %in% neg_vec)) |> 
   phyloseq_to_df(addtax = T, addtot = T, addmaxrank = F)
 
+unique_insti_genus_ps <- subset_taxa(core_pos_taxa, !(Genus %in% neg_vec)) |> 
+  transform_sample_counts(fun=function(x) x/sum(x)) |> 
+  subset_samples(INSTI_drug_current == "YES")
+
 # Plot core taxa 
-core_microbiome_bar <- unique_insti_genus |>
-  ggplot(aes(x = Class, fill = Family)) +
-  geom_bar() +
+core_microbiome_bar <- unique_insti_genus |> 
+  ggplot(aes(x = Class, fill = Genus)) +
+  geom_bar(position = "stack") +
  # facet_wrap(.~INSTI_group, scales = "free") +
   labs(y = "Count", title = "INSTI Core Microbiome Members")
 core_microbiome_bar
 
+
+taxabar <- plot_bar(unique_insti_genus_ps, fill = "Genus")
+taxabar
+
 # Venn diagram
-insti_venn <- ggVennDiagram(x=list(INSTI = pos_pruned, NoINSTI = neg_pruned))
+insti_venn <- ggVennDiagram(x=list(INSTI = pos_pruned, NoINSTI = neg_pruned),
+                            category.names = c("INSTI",
+                                               "no INSTI")) +
+  scale_fill_gradient(low = "lightgray", high = "magenta4") +
+  theme(legend.position = "none", text = element_text(size = 2)) +
+  coord_flip()
 insti_venn
 
 # save objects
-ggsave("core_microbiome_venn.png", insti_venn)
+ggsave("core_microbiome_venn_genus.png", insti_venn)
 ggsave("core_microbiome_bar.png", core_microbiome_bar)
 write_csv(unique_insti_genus, "insti_core_microbiome.csv")
