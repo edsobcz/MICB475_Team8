@@ -26,6 +26,10 @@ INSTI_neg <- subset_samples(phyloseq_RA, INSTI_drug_current == "NO")
 pos_ASVs <- core_members(INSTI_pos, detection = 0.005, prevalence = 0.35)
 neg_ASVs <- core_members(INSTI_neg, detection = 0.005, prevalence = 0.35)
 
+
+diffs <- setdiff(pos_ASVs, neg_ASVs)
+core_pos_taxa <- prune_taxa(diffs, phyloseq_RA)
+
 # detection of 0.005 and prevalence of 0.35 for prev analysis
 
 pos_pruned <- prune_taxa(pos_ASVs, mono) |>
@@ -54,10 +58,10 @@ unique_insti_genus <- subset_taxa(core_pos_taxa, !(Genus %in% neg_vec)) |>
   phyloseq_to_df(addtax = T, addtot = T, addmaxrank = F)
 
 # Plot core taxa 
-core_microbiome_bar <- pruned_df |>
+core_microbiome_bar <- unique_insti_genus |>
   ggplot(aes(x = Class, fill = Family)) +
   geom_bar() +
-  facet_wrap(.~INSTI_group, scales = "free") +
+ # facet_wrap(.~INSTI_group, scales = "free") +
   labs(y = "Count", title = "INSTI Core Microbiome Members")
 core_microbiome_bar
 
