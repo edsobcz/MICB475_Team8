@@ -1,4 +1,47 @@
 ##### MICB 475 Team 8
+# April 3 2025 Team Meeting
+### Agenda:
+- review figures
+- modeling
+- functional analysis
+
+### Meeting Minutes
+- no titles for figure panels
+- report findings we have in past tense; report published findings (current literature) present tense
+- can change taxa names to clean it up; just make sure taxa level is clear
+- fig 2B cut out title since Venn doesn't have one
+- submit panels separately so Evelyn can figure out formatting for UJEMI
+- ideal to have consistent level but ok if it's explicit
+- volcano plot: indicate directionality, which group is upregulated, i.e. explicitly INSTI+ is up/downregulated compared to INSTI-
+- 3C: keep gray, name "treatment group"
+- functional analysis: filter for p < 0.05, fold cutoff +/-2
+- look back into literature and see how "clean" their data is, were patients only taking INSTIs as opposed to multidrug regimens?
+- random forest: really overfitted, not good accuracy
+- knn also pretty bad
+- can still put in manuscript: we can't use ML to predict INSTI status, which is technically a finding
+- maybe look at MSM and PrEP specifically
+- Evelyn says just use what we have and draft the manuscript
+- can look deeper into pathways, would need to manually look into everything and bin for patterns
+  - add to Fig. 4
+- ML in supplemental, talk about it in indic species section
+- mention what statistical tests were used for p-values in figure legends
+- summary:
+- Fig. 1: INSTI has effect on beta diversity
+- Fig. 2: confirm what level core microbiome is at
+  - 2A and 2B should be related
+  - figure out unique 8 genera in Venn diagram
+  - taxa bar plot: make it relative abundance, might not be meaningful
+  - show only unique genera; figure out how to isolate these 8
+  - prune taxa only shows 5; manually create Venn diagram to match
+  - taxa bar plot for each sample, show how they fluctuate; i.e. traditional taxa bar plot
+  - too many samples to plot; just report in writing?
+- Fig. 3: indic species only
+  - convert everything to genus
+- Fig. 4: differential expression
+  - A: volcano, B: bar plot
+- Fig. 5: functional analysis
+  - p<0.05, logF[-1, 1]
+
 # March 25 2025 Team Meeting
 ### Agenda:
 - discuss KNN model progress and existing issues with data structure
