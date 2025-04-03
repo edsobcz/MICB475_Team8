@@ -53,7 +53,7 @@ supplemental
 1a. HIV+/HIV-
 1b. depression+/depression-
 
-by next week: have all the figures done! :)
+by next meeting (Thursday, Apr 3): have all the figures done! :)
 
 # March 18 2025 Team Meeting
 ### Agenda:
