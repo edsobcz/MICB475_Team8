@@ -18,12 +18,12 @@ load("mpt_final.RData")
 ## Load data ##
 # Change file paths as necessary
 # meta <- read_delim("modified_metadata.tsv", delim="\t")
-otu <- read_delim(file = "../01_export_files/table_export/feature-table.txt", delim="\t", skip=1)
-tax <- read_delim("../01_export_files/taxonomy_export/taxonomy.tsv", delim="\t")
-phylotree <- read.tree("../01_export_files/rooted_tree_export/tree.nwk")
+otu <- read_delim(file = "feature-table.txt", delim="\t", skip=1)
+tax <- read_delim("taxonomy.tsv", delim="\t")
+phylotree <- read.tree("tree.nwk")
 
 # Metadata file with 7 more columns
-meta_long <- read_delim("../01_metadata_files/modified_metadata_long.tsv", delim="\t")
+meta_long <- read_delim("modified_metadata_long.tsv", delim="\t")
 ## Format Files ##
 
 # OTU table
@@ -94,16 +94,20 @@ pie_data$label <- paste0(pie_data$group, "\n", pie_data$percentage, "%")
 
 # Create pie chart 
 pie_chart_types <- ggplot(pie_data, aes(x = "", y = count, fill = group)) +
-                    geom_bar(stat = "identity", width = 1) +
-                    coord_polar("y", start = 0) +
-                    theme_void() +
-                    scale_fill_manual(values = c("HIV mono-infected" = "firebrick", 
-                                                 "HIV-/HCV-" = "steelblue", 
-                                                 "HCV infected" = "gold3")) +
-                    labs(title = "Distribution of Sample Types") +
-                    geom_text(aes(label = label), position = position_stack(vjust = 0.5)) +
-                    theme(legend.position = "none",
-                          plot.title = element_text(hjust = 0.5))
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start = 0) +
+  theme_void() +
+  scale_fill_manual(values = c("HIV mono-infected" = "firebrick", 
+                               "HIV-/HCV-" = "steelblue", 
+                               "HCV infected" = "gold3")) +
+  #labs(title = "Distribution of Sample Types") +
+  geom_text(aes(label = label, 
+                hjust = ifelse(group == "HIV mono-infected", 0.5, 0.6)), 
+            position = position_stack(vjust = 0.5), 
+            size = 5.2) +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
+
 pie_chart_types
 
 # ----- HIV+ INSTI + vs HIV+ INSTI- -----
@@ -123,16 +127,18 @@ pie_data_INSTI$label <- paste0(pie_data_INSTI$group, "\n", pie_data_INSTI$percen
 
 # Create pie chart 
 pie_chart_INSTI <- ggplot(pie_data_INSTI, aes(x = "", y = count, fill = group)) +
-                    geom_bar(stat = "identity", width = 1) +
-                    coord_polar("y", start = 0) +
-                    theme_void() +
-                    scale_fill_manual(values = c("INSTI+" = "darkgreen", 
-                                                 "INSTI-" = "darkorange")) +
-                    labs(title = "Percentage of INSTI+ vs INSTI- in HIV+ Samples") +
-                    geom_text(aes(label = label), position = position_stack(vjust = 0.5)) +
-                    theme(legend.position = "none",
-                          plot.title = element_text(hjust = 0.5))
-
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start = 0) +
+  theme_void() +
+  scale_fill_manual(values = c("INSTI+" = "darkgreen", 
+                               "INSTI-" = "darkorange")) +
+  geom_text(aes(label = label, 
+                vjust = ifelse(group == "INSTI-", 1.1, 
+                               ifelse(group == "INSTI+", -0.2, 0.5))),
+            position = position_stack(vjust = 0.5), 
+            size = 5.2) +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
 pie_chart_INSTI
 
 #----- Wilcoxon test for INSTI+/INSTI- ------
@@ -165,12 +171,13 @@ combined_richness <- rbind(rich_HIVpos, rich_healthy)
 shannon_hh<- ggplot(combined_richness, aes(x = group, y = Shannon, fill = group)) +
               geom_boxplot() +
               theme_bw() +
-              labs(title = "Shannon Diversity by HIV Status",
-                   y = "Shannon Diversity",
+              labs(y = "Shannon Diversity",
                    x = "") +
               scale_fill_manual(values = c("HIV+" = "firebrick", "HIV-/HCV-" = "steelblue"))+
               theme(legend.position = "none",
-                    plot.title = element_text(hjust = 0.5))
+                    axis.text.x = element_text(size = 15),
+                    axis.text.y = element_text(size = 10),
+                    axis.title.y = element_text(size = 15)) 
 
 shannon_hh
 

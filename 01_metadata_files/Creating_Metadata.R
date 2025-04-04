@@ -4,9 +4,9 @@ library(dplyr)
 library(stringr)
 
 ##### Load initial files #####
-Lmeta <- read.delim("Long_metadata.txt")
-depression_mdata <- read.delim("depression_metadata.txt")
-Full_exp_list <- read.delim("Experiment_list.txt")[,c("run_accession","experiment_accession")]
+Lmeta <- read.delim("../01_metadata_files/Long_metadata.txt")
+depression_mdata <- read.delim("../01_metadata_files/depression_metadata.txt")
+Full_exp_list <- read.delim("../01_metadata_files/Experiment_list.txt")[,c("run_accession","experiment_accession")]
 
 #Proces original metadata file
 Ometa <- depression_mdata[!is.na(depression_mdata$sample.id), ]
@@ -14,19 +14,19 @@ Ometa$Submitter_Id <- gsub("^qiita_sid_11135:", "", Ometa$Submitter_Id)
 Ometa <- rename(Ometa, sample_name = Submitter_Id, run_accession = sample.id)
 
 #Compile list of samples that belong to 16S
-S1_16S <- read.delim("16S1.tsv")[,c("sample_name","hcv")] #Note: used hcv to keep dataframe format for later processing. 
-S2_16S <- read.delim("16S2.tsv")[,c("sample_name","hcv")]
-S3_16S <- read.delim("16S3.tsv")[,c("sample_name","hcv")]
-S4_16S <- read.delim("16S4.tsv")[,c("sample_name","hcv")]
+S1_16S <- read.delim("../01_metadata_files/16S1.tsv")[,c("sample_name","hcv")] #Note: used hcv to keep dataframe format for later processing. 
+S2_16S <- read.delim("../01_metadata_files/16S2.tsv")[,c("sample_name","hcv")]
+S3_16S <- read.delim("../01_metadata_files/16S3.tsv")[,c("sample_name","hcv")]
+S4_16S <- read.delim("../01_metadata_files/16S4.tsv")[,c("sample_name","hcv")]
 
 compiled_list_16S <- bind_rows(S1_16S, S2_16S, S3_16S, S4_16S) %>%
   distinct(sample_name, .keep_all = TRUE)
 
 #Compile list that map Experiment number to sample name that belong to 16S
-E1_16S <- read.delim("E1.tsv")
-E2_16S <- read.delim("E2.tsv")
-E3_16S <- read.delim("E3.tsv")
-E4_16S <- read.delim("E4.tsv")
+E1_16S <- read.delim("../01_metadata_files/E1.tsv")
+E2_16S <- read.delim("../01_metadata_files/E2.tsv")
+E3_16S <- read.delim("../01_metadata_files/E3.tsv")
+E4_16S <- read.delim("../01_metadata_files/E4.tsv")
 
 compiled_experimetn_list_16S <- bind_rows(E1_16S, E2_16S, E3_16S, E4_16S) %>%
   distinct(sample_name, .keep_all = TRUE)
