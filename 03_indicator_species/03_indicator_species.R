@@ -11,7 +11,7 @@ library(dplyr)
 load("mpt_final.RData")
 Mono_Infected <- mpt_final %>% subset_samples(hiv_status_clean == "HIV+"& hcv == "NO")
 
-#### Indicator Species/Taxa Analysis ####
+### Indicator Species/Taxa Analysis ####
 # Glom to Genus level 
 set.seed(1234)
 mpt_genus_RA <- Mono_Infected %>%
@@ -68,7 +68,13 @@ all_indic_species <- inst_isa |>
   geom_bar(stat = "identity") +
   facet_grid(rows = vars(insti)) +
   labs(title = "INSTI Indicator Species") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  scale_x_discrete(labels = c("Actinobacteria",
+                              "Alphaproteobacteria",
+                              "Bacteroidia",
+                              "Clostridia",
+                              "Gammaproteobacteria")) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 0.55, vjust = 0.65))
 
 all_indic_species
 
