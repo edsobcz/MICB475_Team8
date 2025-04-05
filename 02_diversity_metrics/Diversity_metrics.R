@@ -654,9 +654,13 @@ pcoa_insti_w_plot <- plot_ordination(insti_phyloseq,
                                    color = "INSTI_status") + 
                 theme_bw() +
                 stat_ellipse(type = "norm") +
-                labs(title = "Weighted UniFrac PCoA by INSTI Status\n in HIV+ Individuals") +
                 scale_color_manual(values = c("INSTI+" = "darkgreen", "INSTI-" = "darkorange"))+
-                theme(plot.title = element_text(hjust = 0.5))
+                theme(axis.text.x = element_text(size = 10),
+                      axis.text.y = element_text(size = 10),
+                      axis.title.y = element_text(size = 15),
+                      axis.title.x = element_text(size = 15),
+                      legend.text = element_text(size = 13),
+                      legend.title = element_text(size = 14))
 
 
 pcoa_insti_w_plot
