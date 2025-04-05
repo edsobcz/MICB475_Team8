@@ -216,7 +216,9 @@ faiths_hh <- ggplot(pd_combined, aes(x = Group, y = Faith_PD, fill = Group)) +
                    x = "") +
               scale_fill_manual(values = c("HIV+" = "firebrick", "HIV-/HCV-" = "steelblue"))+
               theme(legend.position = "none",
-                    plot.title = element_text(hjust = 0.5))
+                    axis.text.x = element_text(size = 15),
+                    axis.text.y = element_text(size = 10),
+                    axis.title.y = element_text(size = 15))
 faiths_hh
 
 # ----- Shannon Diversity HIV+ dep+/HIV+ dep-  --------
@@ -242,12 +244,13 @@ combined_richness <- rbind(rich_dep, rich_dep_no)
 shannon_hdp <- ggplot(combined_richness, aes(x = group, y = Shannon, fill = group)) +
                 geom_boxplot() +
                 theme_bw() +
-                labs(title = "Shannon Diversity by Depression \n Status in HIV+ Individuals",
-                     y = "Shannon Diversity",
+                labs(y = "Shannon Diversity",
                      x = "") +
-                scale_fill_manual(values = c("Depressed" = "tan", "Non-depressed" = "chocolate"))+
+                scale_fill_manual(values = c("Depressed" = "tan", "Non-depressed" = "mediumorchid4"))+
                 theme(legend.position = "none",
-                      plot.title = element_text(hjust = 0.5))
+                      axis.text.x = element_text(size = 15),
+                      axis.text.y = element_text(size = 10),
+                      axis.title.y = element_text(size = 15))
 shannon_hdp
 
 #----- Faiths Phylogenetic HIV+ dep+/HIV+ dep- ------
@@ -309,12 +312,13 @@ combined_richness <- rbind(rich_insti, rich_no_insti)
 shannon_insti <- ggplot(combined_richness, aes(x = group, y = Shannon, fill = group)) +
   geom_boxplot() +
   theme_bw() +
-  labs(title = "Shannon Diversity by INSTI Status",
-       y = "Shannon Diversity",
+  labs(y = "Shannon Diversity",
        x = "") +
-  scale_fill_manual(values = c("INSTI+" = "darkblue", "INSTI-" = "darkgrey"))+
+  scale_fill_manual(values = c("INSTI+" = "darkgreen", "INSTI-" = "darkorange"))+
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5))
+        axis.text.x = element_text(size = 15),
+        axis.text.y = element_text(size = 10),
+        axis.title.y = element_text(size = 15))
 
 shannon_insti
 
@@ -591,9 +595,13 @@ pcoa_hh_w_plot <- plot_ordination(hiv_healthy_phyloseq,
                                 color = "Group") + 
                   theme_bw() +
                   stat_ellipse(type = "norm") +
-                  labs(title = "Weighted UniFrac PCoA by HIV Status") +
-                  scale_color_manual(values = c("HIV+" = "firebrick", "HIV-/HCV-" = "turquoise")) +
-                  theme(plot.title = element_text(hjust = 0.5))
+                  scale_color_manual(values = c("HIV+" = "firebrick", "HIV-/HCV-" = "steelblue")) +
+                  theme( axis.text.x = element_text(size = 10),
+                         axis.text.y = element_text(size = 10),
+                         axis.title.y = element_text(size = 15),
+                         axis.title.x = element_text(size = 15),
+                         legend.text = element_text(size = 13),
+                         legend.title = element_text(size = 14))
 
 pcoa_hh_w_plot
 
@@ -617,9 +625,13 @@ pcoa_hdp_w_plot <- plot_ordination(hiv_phyloseq,
                                  color = "Group") + 
                     theme_bw() +
                     stat_ellipse(type = "norm") +
-                    labs(title = "Weighted UniFrac PCoA by \n Depression Status in HIV+ Individuals") +
-                    scale_color_manual(values = c("Depressed" = "tan", "Non-depressed" = "chocolate")) +
-                    theme(plot.title = element_text(hjust = 0.5))
+                    scale_color_manual(values = c("Depressed" = "tan", "Non-depressed" = "mediumorchid4")) +
+                    theme(axis.text.x = element_text(size = 10),
+                          axis.text.y = element_text(size = 10),
+                          axis.title.y = element_text(size = 15),
+                          axis.title.x = element_text(size = 15),
+                          legend.text = element_text(size = 13),
+                          legend.title = element_text(size = 14))
 
 pcoa_hdp_w_plot
 
