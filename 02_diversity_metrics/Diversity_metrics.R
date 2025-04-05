@@ -7,6 +7,8 @@ library(stringr)
 library(nlme)
 library(picante)
 
+set.seed(1)
+
 # If you ran the script and already saved the RData files, you can just reload them.
 
 #### Load in RData ####
@@ -181,6 +183,9 @@ shannon_hh<- ggplot(combined_richness, aes(x = group, y = Shannon, fill = group)
 
 shannon_hh
 
+#Wilcox Test
+wilcox.test(rich_HIVpos$Shannon, rich_healthy$Shannon, exact = FALSE)
+
 #----- Faiths Phylogenetic Diversity HIV+/Healthy ------
 # Extract OTU tables and tree
 otu_table_infected <- otu_table(Infected)
@@ -253,6 +258,9 @@ shannon_hdp <- ggplot(combined_richness, aes(x = group, y = Shannon, fill = grou
                       axis.title.y = element_text(size = 15))
 shannon_hdp
 
+#Wilcox Test
+wilcox.test(rich_dep$Shannon, rich_dep_no$Shannon)
+
 #----- Faiths Phylogenetic HIV+ dep+/HIV+ dep- ------
 # Extract OTU tables and tree
 otu_table_depressed <- otu_table(depression)
@@ -321,6 +329,9 @@ shannon_insti <- ggplot(combined_richness, aes(x = group, y = Shannon, fill = gr
         axis.title.y = element_text(size = 15))
 
 shannon_insti
+
+#Wilcox Test
+wilcox.test(rich_insti$Shannon, rich_no_insti$Shannon)
 
 #----- Faiths Phylogenetic INSTI+/INSTI- ------
 # Extract OTU tables and tree
