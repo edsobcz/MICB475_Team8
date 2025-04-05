@@ -7,7 +7,6 @@ library(stringr)
 library(nlme)
 library(picante)
 
-set.seed(1)
 
 # If you ran the script and already saved the RData files, you can just reload them.
 
@@ -534,6 +533,7 @@ meta_subset_insti <- data.frame(sample_data(mpt_rare))[insti_samples, ]
 meta_subset_insti$insti_factor <- ifelse(meta_subset_insti$INSTI_drug_current == "YES", "INSTI+", "INSTI-")
 
 # PERMANOVA test
+
 permanova_result_insti <- adonis2(unifrac_dist_subset_insti ~ insti_factor, data = meta_subset_insti)
 print(permanova_result_insti)
 
@@ -617,6 +617,7 @@ pcoa_hh_w_plot <- plot_ordination(hiv_healthy_phyloseq,
 pcoa_hh_w_plot
 
 # Run PERMANOVA
+set.seed(123)
 permanova_result_hh_2 <- adonis2(weighted_unifrac_dist_hh ~ group_factor, data = meta_subset_hh)
 print(permanova_result_hh_2)
 
@@ -647,6 +648,7 @@ pcoa_hdp_w_plot <- plot_ordination(hiv_phyloseq,
 pcoa_hdp_w_plot
 
 # Run PERMANOVA
+set.seed(123)
 permanova_result_hdp_2 <- adonis2(weighted_unifrac_dist_subset_hdp ~ group_factor, data = meta_subset_hdp)
 print(permanova_result_hdp_2)
 
@@ -677,6 +679,7 @@ pcoa_insti_w_plot <- plot_ordination(insti_phyloseq,
 pcoa_insti_w_plot
 
 # Run PERMANOVA
+set.seed(123)
 permanova_result_insti_2 <- adonis2(weighted_unifrac_dist_subset_insti ~ insti_factor, data = meta_subset_insti)
 print(permanova_result_insti_2)
 
