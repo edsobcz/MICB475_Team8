@@ -199,7 +199,7 @@ roc_train <- roc(train_labels$true_labels, train_labels$predicted_probabilities)
 
 # True positive rate = sensitivity
 # False positive rate = 1-specificity
-ggplot() +
+ROC_curve<- ggplot() +
   # Training data: this is a type of control
   geom_line(aes(x = 1 - roc_train$specificities, y = roc_train$sensitivities), 
             color = "red",size=1) +
@@ -221,7 +221,7 @@ roc_data = data.frame(Dataset = 'RF Tutorial Data',
                       Testing_AUC_CI = paste0(round(ci_test[1], 2), "-", round(ci_test[2], 2)))
 
 
-importance_df %>% 
+Importance_features <- importance_df %>% 
   # Data are arranged by decreasing importance - turn it into a factor.
   # Otherwise the features will show up alphabetically instead.
   mutate(Feature = factor(.$Feature,levels = .$Feature)) %>% 
@@ -285,3 +285,6 @@ print(final_comparison)
 # Formatted table
 library(knitr)
 kable(final_comparison, caption = "Comprehensive Model Performance")
+
+ggsave("ROC_curve_random_forest.png", plot = ROC_curve)
+ggsave("Importance_features.png", plot = Importance_features)
