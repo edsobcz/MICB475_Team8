@@ -62,39 +62,39 @@ all_indic_species <- inst_isa |>
                            index == 2 ~ "INSTI")) |> 
   select(stat:insti) |>
   arrange(desc(stat)) |> 
-  group_by(Class, insti) |> 
+  group_by(Genus, insti) |> 
   summarize(count = n()) |> 
-  ggplot(aes(x = Class, y = count)) +
+  ggplot(aes(x = Genus, y = count)) +
   geom_bar(stat = "identity") +
   facet_grid(rows = vars(insti)) +
   labs(title = "INSTI Indicator Species") +
-  scale_x_discrete(labels = c("Actinobacteria",
-                              "Alphaproteobacteria",
-                              "Bacteroidia",
-                              "Clostridia",
-                              "Gammaproteobacteria")) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 0.55, vjust = 0.65))
 
 all_indic_species
 
 # Other possible visualization
-all_indic_species2 <- inst_isa |> 
-  mutate(insti = case_when(s.YES == 1 ~ "INSTI",s.NO == 1 ~ "No INSTI")) |> 
-  select(Class, insti) |>
-  group_by(Class, insti) |> 
-  summarize(count = n(), .groups = 'drop') |>
-  ggplot(aes(x = Class, y = count, fill = insti)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  labs(title = "Indicator Species by Taxonomic \n Class and INSTI Status",
-       x = "Taxonomic Class",
-       y = "Count",
-       fill = "") +
+# Create visualization with stat on y-axis
+genus_indicators <- inst_isa %>%
+  mutate(insti_group = case_when(
+    s.YES == 1 ~ "INSTI",
+    s.NO == 1 ~ "No INSTI"
+  )) %>%
+  mutate(Genus = gsub("g__", "", Genus)) %>%  
+  filter(!is.na(Genus)) %>%
+  mutate(insti_group = factor(insti_group, levels = c("INSTI", "No INSTI")))
+
+# Create plot with facet_grid using stat values
+all_indic_species2 <- ggplot(genus_indicators, aes(x = Genus, y = stat,fill = insti_group)) +
+  geom_bar(stat = "identity") +
+  facet_grid(rows = vars(insti_group), scales = "free_x") +
+  labs(title = NULL,
+    x = "Genus",
+    y = "Indicator Value (stat)",
+    fill = NULL) +
+  scale_fill_manual(values = c("INSTI" = "darkgreen", "No INSTI" = "orange")) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        plot.title = element_text(hjust = 0.5),
-        legend.position = "bottom")+
-  scale_fill_manual(values = c("INSTI" = "darkblue", "No INSTI" = "darkgrey"))
+  theme(legend.position = "none",axis.text.x = element_text(angle = 45, hjust = 0.55, vjust = 0.65))
 
 all_indic_species2
 

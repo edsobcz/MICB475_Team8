@@ -6,6 +6,7 @@ library(microbiome)
 library(ggVennDiagram)
 library(sf)
 library(metagMisc)
+library(patchwork)
 set.seed(1234)
 
 # load data
@@ -66,7 +67,16 @@ core_microbiome_bar <- unique_insti_genus |>
   ggplot(aes(x = Class, fill = Genus)) +
   geom_bar(position = "stack") +
  # facet_wrap(.~INSTI_group, scales = "free") +
-  labs(y = "Count", title = "INSTI Core Microbiome Members")
+  labs(y = "Count", title = NULL, fill = NULL)+
+  theme(
+    legend.position = "top", 
+    text = element_text(size = 10),
+    legend.key.width = unit(0.5, "cm"),
+    legend.text = element_text(size = 8),
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.box.spacing = unit(0.1, "cm")) +
+  guides(fill = guide_legend(ncol = 2))
+
 core_microbiome_bar
 
 
@@ -74,15 +84,37 @@ taxabar <- plot_bar(unique_insti_genus_ps, fill = "Genus")
 taxabar
 
 # Venn diagram
-insti_venn <- ggVennDiagram(x=list(INSTI = pos_pruned, NoINSTI = neg_pruned),
-                            category.names = c("INSTI",
-                                               "no INSTI")) +
+# Get unique genera (not ASVs) for each group
+pos_genera <- unique(tax_table(subset_taxa(INSTI_pos, taxa_names(INSTI_pos) %in% pos_ASVs))[,"Genus"])
+neg_genera <- unique(tax_table(subset_taxa(INSTI_neg, taxa_names(INSTI_neg) %in% neg_ASVs))[,"Genus"])
+
+# Create the Venn diagram at genus level
+genus_venn <- ggVennDiagram(x=list(INSTI = pos_genera, NoINSTI = neg_genera),
+                            category.names = c("INSTI", "no INSTI")) +
   scale_fill_gradient(low = "lightgray", high = "magenta4") +
-  theme(legend.position = "none", text = element_text(size = 2)) +
+  theme(legend.position = "none", text = element_text(size = 5)) +
   coord_flip()
-insti_venn
+
+genus_venn
+
+# Create the combined figure
+combined_plot <- genus_venn + core_microbiome_bar + 
+  plot_annotation(tag_levels = 'A',title = "") & 
+  theme(plot.tag = element_text(size = 18))
+
+combined_plot
+
 
 # save objects
-ggsave("core_microbiome_venn_genus.png", insti_venn)
+ggsave("core_microbiome_venn_genus.png", genus_venn)
 ggsave("core_microbiome_bar.png", core_microbiome_bar)
+ggsave("FINAL_combined_core_microbiome.png", 
+       combined_plot,
+       width = 12,     
+       height = 6,    
+       dpi = 300,     
+       units = "in",  
+       limitsize = FALSE,  
+       bg = "white")  
+
 write_csv(unique_insti_genus, "insti_core_microbiome.csv")
