@@ -33,12 +33,12 @@ core_pos_taxa <- prune_taxa(diffs, phyloseq_RA)
 
 # detection of 0.005 and prevalence of 0.35 for prev analysis
 
+
 pos_pruned <- prune_taxa(pos_ASVs, mono) |>
   tax_table()
 
 neg_pruned <- prune_taxa(neg_ASVs, mono) |>
   tax_table()
-
 
 # Coerce OTU table with taxa to df
 core_pos_taxa <- prune_taxa(pos_ASVs, phyloseq_RA)
