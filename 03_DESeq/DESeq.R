@@ -7,6 +7,7 @@ library(patchwork)
 library(magick)
 library(ggplot2)
 library(grid)
+library(stringr)
 
 #### Load data ####
 load("longmeta_phyloseq_unrare.RData")
