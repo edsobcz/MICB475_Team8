@@ -92,6 +92,30 @@ sigASVs_bar <- ggplot(sigASVs_with_tax, aes(x = Genus, y = log2FoldChange, fill 
 
 sigASVs_bar
 
+
+
+test <- sigASVs_with_tax[,c("Class","Genus","log2FoldChange")]
+
+# Alternative approach with simpler coloring
+sigASVs_bar_op <- ggplot(sigASVs_with_tax, aes(x = Genus, y = log2FoldChange)) +
+  # Set the fill explicitly with a custom condition
+  geom_bar(stat = "identity", width = 0.8, 
+           aes(fill = case_when(
+             Class == "c__Clostridia" ~ "Clostridia",
+             TRUE ~ "Other"))) +
+  geom_errorbar(aes(ymin = log2FoldChange - lfcSE, ymax = log2FoldChange + lfcSE), width = 0.3) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray40") +
+  scale_fill_manual(values = c("Clostridia" = "darkgreen", 
+                               "Other" = "gray50")) +
+  labs(title = NULL,
+       x = NULL,
+       y = "Log2 Fold Change") +
+  theme_minimal() +
+  theme(legend.position = "none", text = element_text(size = 14)) +
+  coord_flip()
+
+sigASVs_bar_op 
+
 library(cowplot)
 library(ggplot2)
 
@@ -112,6 +136,7 @@ combined_plot
 #### Saving files #####
 ggsave("Volcano_plot.png",vol_plot)
 ggsave("sigASVs_bar.png", sigASVs_bar)
+ggsave("sigASVs_bar_op.png", sigASVs_bar_op, bg="white")
 ggsave("FINAL_combined_DESeq.png", 
        combined_plot,
        width = 12,     
