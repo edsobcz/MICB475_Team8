@@ -7,6 +7,7 @@ library(ggVennDiagram)
 library(sf)
 library(metagMisc)
 library(patchwork)
+library(RColorBrewer)
 set.seed(1234)
 
 # load data
@@ -66,13 +67,19 @@ unique_insti_genus_ps <- subset_taxa(core_pos_taxa, !(Genus %in% neg_vec)) |>
 core_microbiome_bar <- unique_insti_genus |> 
   ggplot(aes(x = Class, fill = Genus)) +
   geom_bar(position = "stack") +
- # facet_wrap(.~INSTI_group, scales = "free") +
   labs(y = "Count", title = NULL, fill = NULL)+
+  scale_x_discrete(labels = c("Bacilli", "Bacteroidia", "Clostridia")) +
+  scale_fill_brewer(labels = c("Eubacteriaceae",
+                               "Alloprevotella",
+                               "Anaerostipes",
+                               "Fusicatenibacter",
+                               "Holdemanella"),
+                    palette = "Set3") +
   theme(
     legend.position = "top", 
     text = element_text(size = 10),
     legend.key.width = unit(0.5, "cm"),
-    legend.text = element_text(size = 8),
+    legend.text = element_text(size = 10),
     legend.spacing.x = unit(0.2, 'cm'),
     legend.box.spacing = unit(0.1, "cm")) +
   guides(fill = guide_legend(ncol = 2))
@@ -90,9 +97,9 @@ neg_genera <- unique(tax_table(subset_taxa(INSTI_neg, taxa_names(INSTI_neg) %in%
 
 # Create the Venn diagram at genus level
 genus_venn <- ggVennDiagram(x=list(INSTI = pos_genera, NoINSTI = neg_genera),
-                            category.names = c("INSTI", "no INSTI")) +
+                            category.names = c("INSTI+", "INSTI-")) +
   scale_fill_gradient(low = "lightgray", high = "magenta4") +
-  theme(legend.position = "none", text = element_text(size = 5)) +
+  theme(legend.position = "none", text = element_text(size = 20)) +
   coord_flip()
 
 genus_venn

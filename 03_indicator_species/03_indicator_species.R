@@ -93,8 +93,18 @@ all_indic_species2 <- ggplot(genus_indicators, aes(x = Genus, y = stat,fill = in
     y = "Indicator Value (stat)",
     fill = NULL) +
   scale_fill_manual(values = c("INSTI" = "darkgreen", "No INSTI" = "orange")) +
-  theme_minimal() +
-  theme(legend.position = "none",axis.text.x = element_text(angle = 45, hjust = 0.55, vjust = 0.65))
+  theme_bw() +
+  theme(legend.position = "none",axis.text.x = element_text(angle = 45, hjust = 0.95, vjust = 0.95)) +
+  scale_x_discrete(labels = c("Eubacterium",
+                              "Anaerostignum",
+                              "Corynebacterium",
+                              "Gluconobacter",
+                              "Harryflintia",
+                              "Lactonifactor",
+                              "Odoribacter",
+                              "Pseudoflavonifractor")) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme(text = element_text(size = 10))
 
 all_indic_species2
 
