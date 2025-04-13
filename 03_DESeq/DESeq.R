@@ -3,7 +3,10 @@ library(tidyverse)
 library(phyloseq)
 library(DESeq2)
 library(indicspecies)
-
+library(patchwork) 
+library(magick)
+library(ggplot2)
+library(grid)
 
 #### Load data ####
 load("longmeta_phyloseq_unrare.RData")
@@ -68,31 +71,53 @@ sigASVs_with_tax <- tax_table(mpt_DESeq) %>%
   arrange(log2FoldChange) %>%
   filter(!is.na(Genus)) %>%  
   mutate(Genus = make.unique(Genus)) %>%
+  mutate(Genus = gsub("g__", "", Genus)) %>%
   mutate(Genus = factor(Genus, levels=unique(Genus)))
 
 # Create bar plot
 sigASVs_bar <- ggplot(sigASVs_with_tax, aes(x = Genus, y = log2FoldChange, fill = log2FoldChange > 0)) +
-  geom_bar(stat = "identity", width = 0.7) +
+  geom_bar(stat = "identity", width = 0.8) +
   geom_errorbar(aes(ymin = log2FoldChange - lfcSE, ymax = log2FoldChange + lfcSE), width = 0.3) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "gray40") +
-  scale_fill_manual(values = c("FALSE" = "navyblue", "TRUE" = "darkred"), 
+  scale_fill_manual(values = c("FALSE" = "orange", "TRUE" = "darkgreen"), 
                     labels = c("FALSE" = "Decreased", "TRUE" = "Increased"),
                     name = "Abundance") +
-  labs(title = "Differentially Abundant Taxa with by INSTI Status \n on HIV+ Individuals",
+  labs(title = NULL,
     x = NULL,
     y = "Log2 Fold Change") +
   theme_minimal() +
-  theme(legend.position = "top",
-        legend.justification = "center", 
-        legend.box.just = "center",       
-        plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "none",text = element_text(size = 14)) +
   coord_flip()  
 
 sigASVs_bar
 
+library(cowplot)
+library(ggplot2)
+
+# First, try loading the image again with a direct path
+img_path <- "../03_indicator_species/Indicator_species2.png"
+
+
+# Create a ggdraw object with the image
+img_plot <- ggdraw() + draw_image(img_path)
+
+# Create the combined figure
+combined_plot <- img_plot + sigASVs_bar + 
+  plot_annotation(tag_levels = 'A',title = "") & 
+  theme(plot.tag = element_text(size = 18))
+
+combined_plot
 
 #### Saving files #####
 ggsave("Volcano_plot.png",vol_plot)
 ggsave("sigASVs_bar.png", sigASVs_bar)
+ggsave("FINAL_combined_DESeq.png", 
+       combined_plot,
+       width = 12,     
+       height = 6,    
+       dpi = 300,     
+       units = "in",  
+       limitsize = FALSE,  
+       bg = "white")
   
 
