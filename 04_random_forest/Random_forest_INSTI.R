@@ -224,12 +224,19 @@ roc_data = data.frame(Dataset = 'RF Tutorial Data',
 Importance_features <- importance_df %>% 
   # Data are arranged by decreasing importance - turn it into a factor.
   # Otherwise the features will show up alphabetically instead.
-  mutate(Feature = factor(.$Feature,levels = .$Feature)) %>% 
-  ggplot(aes(Feature,MeanDecreaseGini,fill=MeanDecreaseGini)) +
+  arrange(desc(MeanDecreaseGini)) %>%
+  mutate(Feature = factor(Feature, levels = Feature)) %>% 
+  ggplot(aes(x = Feature, y = MeanDecreaseGini, fill = MeanDecreaseGini)) +
   geom_col() +
-  theme_classic(base_size=18) +
-  theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1)) +
-  ylab('Importance (Gini)') + xlab(NULL)
+  scale_fill_gradient(low = "#9ECAE9", high = "navy", name = "Mean\nDecrease\nGini") +
+  labs(y = "Importance (Gini)", x = NULL) +
+  theme_minimal(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "right",
+    legend.title = element_text(size = 10),
+    panel.grid.major.x = element_blank())
+
+Importance_features
 
 
 # Create a data frame

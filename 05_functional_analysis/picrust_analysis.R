@@ -41,9 +41,9 @@ library(ggh4x)
 library(dplyr)
 
 # First, remove the existing package
-remove.packages("ggpicrust2")
+#remove.packages("ggpicrust2")
 
-BiocManager::install("ggpicrust2", force = TRUE)
+#BiocManager::install("ggpicrust2", force = TRUE)
 
 install.packages("ggpicrust2_1.7.3.tar.gz", repos = NULL, type = "source")
 
@@ -103,7 +103,8 @@ metacyc_daa_annotated_results_df <- pathway_annotation(pathway = "MetaCyc",
                                                        daa_results_df = abundance_daa_results_df, ko_to_kegg = FALSE)
 
 # Filter p-values to only significant ones
-feature_with_p_0.05 <- abundance_daa_results_df %>% filter(p_values < 0.001)
+feature_with_p_0.05 <- abundance_daa_results_df %>% filter(p_adjust < 0.001)
+
 
 #Changing the pathway column to description for the results 
 feature_desc = inner_join(feature_with_p_0.05,metacyc_daa_annotated_results_df, by = "feature")
@@ -146,11 +147,33 @@ View(res_desc)
 
 # Filter to only include significant pathways
 sig_res = res_desc %>%
-  filter(pvalue < 0.001)
+  filter(pvalue < 0.05) %>%
+  filter(log2FoldChange > 1 | log2FoldChange < -1 )
+    
 # You can also filter by Log2fold change
 
 sig_res <- sig_res[order(sig_res$log2FoldChange),]
-ggplot(data = sig_res, aes(y = reorder(description, sort(as.numeric(log2FoldChange))), x= log2FoldChange, fill = pvalue))+
+
+diff_path <- ggplot(data = sig_res, aes(y = reorder(description, sort(as.numeric(log2FoldChange))), x= log2FoldChange, fill = pvalue))+
   geom_bar(stat = "identity")+ 
   theme_bw()+
-  labs(x = "Log2FoldChange", y="Pathways")
+  labs(x = "Log2FoldChange", y="Pathways")+
+  scale_y_discrete(labels = c(
+    "coenzyme B biosynthesis" = "coenzyme B\nbiosynthesis",
+    "methanogenesis from H2 and CO2" = "methanogenesis from \n H2 and CO2",
+    "archaetidylserine and archaetidylethanolamine biosynthesis" = 
+      "archaetidylserine and\narchaetidylethanolamine\nbiosynthesis")) +
+  theme_minimal(base_size = 20) +
+  theme(axis.text = element_text(size = 20))
+
+diff_path
+
+
+ggsave("FINAL_functional_analysis.png", 
+       diff_path,
+       width = 14,     
+       height = 8,    
+       dpi = 300,     
+       units = "in",  
+       limitsize = FALSE,  
+       bg = "white")

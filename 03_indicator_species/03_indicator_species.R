@@ -77,12 +77,12 @@ all_indic_species
 # Create visualization with stat on y-axis
 genus_indicators <- inst_isa %>%
   mutate(insti_group = case_when(
-    s.YES == 1 ~ "INSTI",
-    s.NO == 1 ~ "No INSTI"
+    s.YES == 1 ~ "INSTI+",
+    s.NO == 1 ~ "INSTI -"
   )) %>%
   mutate(Genus = gsub("g__", "", Genus)) %>%  
   filter(!is.na(Genus)) %>%
-  mutate(insti_group = factor(insti_group, levels = c("INSTI", "No INSTI")))
+  mutate(insti_group = factor(insti_group, levels = c("INSTI+", "INSTI -")))
 
 # Create plot with facet_grid using stat values
 all_indic_species2 <- ggplot(genus_indicators, aes(x = Genus, y = stat,fill = insti_group)) +
@@ -92,7 +92,7 @@ all_indic_species2 <- ggplot(genus_indicators, aes(x = Genus, y = stat,fill = in
     x = "Genus",
     y = "Indicator Value (stat)",
     fill = NULL) +
-  scale_fill_manual(values = c("INSTI" = "darkgreen", "No INSTI" = "orange")) +
+  scale_fill_manual(values = c("INSTI+" = "darkgreen", "INSTI -" = "orange")) +
   theme_bw() +
   theme(legend.position = "none",axis.text.x = element_text(angle = 45, hjust = 0.95, vjust = 0.95)) +
   scale_x_discrete(labels = c("Eubacterium",
