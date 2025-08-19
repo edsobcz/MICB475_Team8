@@ -109,9 +109,10 @@ sigASVs_bar_op <- ggplot(sigASVs_with_tax, aes(x = Genus, y = log2FoldChange)) +
                                "Other" = "gray50")) +
   labs(title = NULL,
        x = NULL,
-       y = "Log2 Fold Change") +
+       y = "Log2 Fold Change",
+       fill = "") +
   theme_minimal() +
-  theme(legend.position = "none", text = element_text(size = 14)) +
+  theme(legend.position = "right", text = element_text(size = 14)) +
   coord_flip()
 
 sigASVs_bar_op 
