@@ -104,7 +104,7 @@ all_indic_species2 <- ggplot(genus_indicators, aes(x = Genus, y = stat,fill = in
                               "Odoribacter",
                               "Pseudoflavonifractor")) +
   scale_y_continuous(expand = c(0, 0)) +
-  theme(text = element_text(size = 10))
+  theme(text = element_text(size = 10), panel.spacing = unit(1, "lines"))
 
 all_indic_species2
 

@@ -69,7 +69,7 @@ core_microbiome_bar <- unique_insti_genus |>
   geom_bar(position = "stack") +
   labs(y = "Count", title = NULL, fill = NULL)+
   scale_x_discrete(labels = c("Bacilli", "Bacteroidia", "Clostridia")) +
-  scale_fill_brewer(labels = c("Eubacteriaceae",
+  scale_fill_brewer(labels = c("Eubacterium",
                                "Alloprevotella",
                                "Anaerostipes",
                                "Fusicatenibacter",
